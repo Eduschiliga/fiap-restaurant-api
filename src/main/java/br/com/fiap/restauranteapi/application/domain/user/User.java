@@ -1,0 +1,139 @@
+package br.com.fiap.restauranteapi.application.domain;
+
+import java.time.LocalDateTime;
+
+public class User {
+    private String userId;
+    private String name;
+    private String email;
+    private String login;
+    private String password;
+    private Address address;
+    private Boolean active;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+    private LocalDateTime deletedAt;
+
+    public User(
+            String userId,
+            String name,
+            String email,
+            String login,
+            String password,
+            Address address,
+            Boolean active,
+            LocalDateTime createdAt,
+            LocalDateTime updatedAt,
+            LocalDateTime deletedAt
+    ) {
+        this.userId = userId;
+        this.name = name;
+        this.email = email;
+        this.login = login;
+        this.password = password;
+        this.address = address;
+        this.active = active;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.deletedAt = deletedAt;
+    }
+
+    public static User newUser(
+            String name,
+            String email,
+            String login,
+            String password,
+            Address address
+    ) {
+        LocalDateTime now = LocalDateTime.now();
+
+        return new User(
+                null,
+                name,
+                email,
+                login,
+                password,
+                address,
+                true,
+                now,
+                now,
+                null
+        );
+    }
+
+    public User update(
+            String name,
+            String email,
+            String login,
+            String password,
+            Address address,
+            Boolean active
+    ) {
+        if (Boolean.TRUE.equals(active)) {
+            activate();
+        } else {
+            deactivate();
+        }
+
+        this.name = name;
+        this.email = email;
+        this.login = login;
+        this.password = password;
+        this.address = this.address.update(address.getStreet(), address.getNumber(), address.getComplement(), address.getCity(), address.getState(), address.getZipCode(), address.getActive());
+        this.updatedAt = LocalDateTime.now();
+
+        return this;
+    }
+
+    public void activate() {
+        this.active = true;
+        this.deletedAt = null;
+    }
+
+    public void deactivate() {
+        if (this.deletedAt == null) {
+            this.deletedAt = LocalDateTime.now();
+        }
+        this.active = false;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public LocalDateTime getDeletedAt() {
+        return deletedAt;
+    }
+}
