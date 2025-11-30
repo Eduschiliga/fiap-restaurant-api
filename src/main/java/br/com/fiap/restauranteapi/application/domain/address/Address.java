@@ -42,6 +42,35 @@ public class Address {
         this.deletedAt = deletedAt;
     }
 
+    public static Address with(
+            AddressId addressId,
+            String street,
+            String number,
+            String complement,
+            String city,
+            String state,
+            String zipCode,
+            Boolean active,
+            LocalDateTime createdAt,
+            LocalDateTime updatedAt,
+            LocalDateTime deletedAt
+    ) {
+        return new Address(
+                addressId,
+                street,
+                number,
+                complement,
+                city,
+                state,
+                zipCode,
+                active,
+                createdAt,
+                updatedAt,
+                deletedAt
+        );
+    }
+
+
     public static Address newAddress(
             String street,
             String number,
@@ -53,7 +82,7 @@ public class Address {
         LocalDateTime now = LocalDateTime.now();
 
         return new Address(
-                AddressId.generate(),
+                new AddressId(null),
                 street,
                 number,
                 complement,

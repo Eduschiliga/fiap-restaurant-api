@@ -40,6 +40,21 @@ public class User {
         this.deletedAt = deletedAt;
     }
 
+    public static User with(
+            UserId userId,
+            String name,
+            String email,
+            String login,
+            String password,
+            Address address,
+            Boolean active,
+            LocalDateTime createdAt,
+            LocalDateTime updatedAt,
+            LocalDateTime deletedAt
+    ) {
+        return new User(userId, name, email, login, password, address, active, createdAt, updatedAt, deletedAt);
+    }
+
     public static User newUser(
             String name,
             String email,
@@ -50,7 +65,7 @@ public class User {
         LocalDateTime now = LocalDateTime.now();
 
         return new User(
-                UserId.generate(),
+                new UserId(null),
                 name,
                 email,
                 login,
