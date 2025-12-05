@@ -22,8 +22,8 @@ import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
-@RequestMapping
-@RestController("api/users")
+@RestController
+@RequestMapping("api/users")
 public class UserController {
     private final ForCreatingUser forCreatingUser;
     private final ForUpdatingUser forUpdatingUser;

@@ -50,4 +50,9 @@ public class UserRepositoryAdapter implements UserRepository {
     public void deleteById(UserId anId) {
         userJPARepository.deleteById(anId.value());
     }
+
+    @Override
+    public Optional<User> findByLogin(String login) {
+        return userJPARepository.findByLogin(login).map(UserJPAEntity::toUser);
+    }
 }

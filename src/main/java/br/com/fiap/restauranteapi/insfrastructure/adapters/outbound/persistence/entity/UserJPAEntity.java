@@ -25,7 +25,7 @@ public class UserJPAEntity {
     @Column(name = "login", nullable = false, unique = true)
     private String login;
 
-    @Column(name = "password", nullable = false, length = 12)
+    @Column(name = "password", nullable = false)
     private String password;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)

@@ -14,6 +14,7 @@ import br.com.fiap.restauranteapi.application.ports.inbound.list.ListUserOutput;
 import br.com.fiap.restauranteapi.application.ports.inbound.update.ForUpdatingUser;
 import br.com.fiap.restauranteapi.application.ports.inbound.update.user.UpdateUserInput;
 import br.com.fiap.restauranteapi.application.ports.inbound.update.user.UpdateUserOutput;
+import br.com.fiap.restauranteapi.application.ports.outbound.password.PasswordEncoderPort;
 import br.com.fiap.restauranteapi.application.ports.outbound.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -29,10 +30,12 @@ public class UserService implements
         ForGettingUserById,
         ForListingUser {
 
+    private final PasswordEncoderPort passwordEncoder;
     private final UserRepository userRepository;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoderPort passwordEncoder) {
         this.userRepository = Objects.requireNonNull(userRepository);
+        this.passwordEncoder = Objects.requireNonNull(passwordEncoder);
     }
 
     @Override
@@ -50,11 +53,13 @@ public class UserService implements
             );
         }
 
+        String encodedPassword = passwordEncoder.encode(createUserInput.password());
+
         User newUser = User.newUser(
                 createUserInput.name(),
                 createUserInput.email(),
                 createUserInput.login(),
-                createUserInput.password(),
+                encodedPassword,
                 address
         );
 
