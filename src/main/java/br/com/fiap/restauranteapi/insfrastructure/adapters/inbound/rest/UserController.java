@@ -1,5 +1,9 @@
 package br.com.fiap.restauranteapi.insfrastructure.adapters.inbound.rest;
 
+import br.com.fiap.restauranteapi.application.domain.user.User;
+import br.com.fiap.restauranteapi.application.ports.inbound.auth.ForAuthenticatingUser;
+import br.com.fiap.restauranteapi.application.ports.inbound.auth.ForGettingUserByToken;
+import br.com.fiap.restauranteapi.application.ports.inbound.auth.GetUserByTokenOutput;
 import br.com.fiap.restauranteapi.application.ports.inbound.create.user.CreateUserInput;
 import br.com.fiap.restauranteapi.application.ports.inbound.create.user.CreateUserOutput;
 import br.com.fiap.restauranteapi.application.ports.inbound.create.ForCreatingUser;
@@ -10,12 +14,16 @@ import br.com.fiap.restauranteapi.application.ports.inbound.list.ForListingUsers
 import br.com.fiap.restauranteapi.application.ports.inbound.list.ForListingUser;
 import br.com.fiap.restauranteapi.application.ports.inbound.list.ListUserOutput;
 import br.com.fiap.restauranteapi.application.ports.inbound.list.ListUsersByNameOutput;
+import br.com.fiap.restauranteapi.application.ports.inbound.password.ForUpdatingPassword;
+import br.com.fiap.restauranteapi.application.ports.inbound.password.UpdatePasswordInput;
+import br.com.fiap.restauranteapi.application.ports.inbound.password.UpdatePasswordOutput;
 import br.com.fiap.restauranteapi.application.ports.inbound.update.ForUpdatingUser;
 import br.com.fiap.restauranteapi.application.ports.inbound.update.user.UpdateUserInput;
 import br.com.fiap.restauranteapi.application.ports.inbound.update.user.UpdateUserOutput;
 import br.com.fiap.restauranteapi.insfrastructure.adapters.inbound.rest.mapper.UserMapper;
 import br.com.fiap.restauranteapi.insfrastructure.adapters.inbound.rest.model.dto.UserDTO;
 import br.com.fiap.restauranteapi.insfrastructure.adapters.inbound.rest.model.dto.create.CreateUserDTO;
+import br.com.fiap.restauranteapi.insfrastructure.adapters.inbound.rest.model.dto.update.UpdatePasswordDTO;
 import br.com.fiap.restauranteapi.insfrastructure.adapters.inbound.rest.model.dto.update.UpdateUserDTO;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -35,6 +43,9 @@ public class UserController {
     private final ForListingUser forListingUser;
     private final ForListingUsersByName forListingsUsersByName;
     private final ForGettingUserById forGettingUserById;
+    private final ForGettingUserByToken forAuthenticatingUser;
+    private final ForUpdatingPassword forUpdatingPassword;
+
     private final UserMapper userMapper;
 
     public UserController(
@@ -44,6 +55,8 @@ public class UserController {
             ForListingUser forListingUser,
             ForGettingUserById forGettingUserById,
             ForListingUsersByName forListingsUsersByName,
+            ForUpdatingPassword forUpdatingPassword,
+            ForGettingUserByToken forAuthenticatingUser,
             UserMapper userMapper
     ) {
         this.forCreatingUser = forCreatingUser;
@@ -52,6 +65,8 @@ public class UserController {
         this.forListingUser = forListingUser;
         this.forGettingUserById = forGettingUserById;
         this.forListingsUsersByName = forListingsUsersByName;
+        this.forUpdatingPassword = forUpdatingPassword;
+        this.forAuthenticatingUser = forAuthenticatingUser;
         this.userMapper = userMapper;
     }
 
@@ -105,6 +120,18 @@ public class UserController {
         List<UserDTO> userList = userMapper.toListDTO(userOutputList);
 
         return ResponseEntity.ok().body(userList);
+    }
+
+    @PatchMapping("password")
+    public ResponseEntity<UserDTO> updatePassword(
+            @RequestBody UpdatePasswordDTO updatePasswordDto,
+            @RequestHeader("Authorization") String jwtToken
+    ) {
+        GetUserByTokenOutput user = forAuthenticatingUser.getUserByToken(jwtToken);
+        UpdatePasswordInput useCaseInput = userMapper.fromUpdatePasswordDTO(updatePasswordDto, user);
+        UpdatePasswordOutput useCaseOutput = forUpdatingPassword.updatePassword(useCaseInput);
+
+        return ResponseEntity.ok(userMapper.toDTO(useCaseOutput));
     }
 
 }

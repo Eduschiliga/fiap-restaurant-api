@@ -1,10 +1,12 @@
 package br.com.fiap.restauranteapi.application.service;
 
 import br.com.fiap.restauranteapi.application.domain.address.Address;
+import br.com.fiap.restauranteapi.application.domain.exceptions.InvalidPasswordException;
 import br.com.fiap.restauranteapi.application.domain.exceptions.InvalidUserNameException;
 import br.com.fiap.restauranteapi.application.domain.exceptions.UserNotFoundException;
 import br.com.fiap.restauranteapi.application.domain.user.User;
 import br.com.fiap.restauranteapi.application.domain.user.UserId;
+import br.com.fiap.restauranteapi.application.ports.inbound.auth.GetUserByTokenOutput;
 import br.com.fiap.restauranteapi.application.ports.inbound.create.ForCreatingUser;
 import br.com.fiap.restauranteapi.application.ports.inbound.create.user.CreateUserInput;
 import br.com.fiap.restauranteapi.application.ports.inbound.create.user.CreateUserOutput;
@@ -15,6 +17,9 @@ import br.com.fiap.restauranteapi.application.ports.inbound.get.GetUserByIdOutpu
 import br.com.fiap.restauranteapi.application.ports.inbound.list.ListUsersByNameOutput;
 import br.com.fiap.restauranteapi.application.ports.inbound.list.ForListingUser;
 import br.com.fiap.restauranteapi.application.ports.inbound.list.ListUserOutput;
+import br.com.fiap.restauranteapi.application.ports.inbound.password.ForUpdatingPassword;
+import br.com.fiap.restauranteapi.application.ports.inbound.password.UpdatePasswordInput;
+import br.com.fiap.restauranteapi.application.ports.inbound.password.UpdatePasswordOutput;
 import br.com.fiap.restauranteapi.application.ports.inbound.update.ForUpdatingUser;
 import br.com.fiap.restauranteapi.application.ports.inbound.update.user.UpdateUserInput;
 import br.com.fiap.restauranteapi.application.ports.inbound.update.user.UpdateUserOutput;
@@ -22,6 +27,7 @@ import br.com.fiap.restauranteapi.application.ports.outbound.password.PasswordEn
 import br.com.fiap.restauranteapi.application.ports.outbound.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -33,7 +39,9 @@ public class UsersService implements
         ForDeletingUserById,
         ForGettingUserById,
         ForListingUser,
-        ForListingUsersByName {
+        ForListingUsersByName,
+        ForUpdatingPassword
+{
 
     private final PasswordEncoderPort passwordEncoder;
     private final UserRepository userRepository;
@@ -163,5 +171,43 @@ public class UsersService implements
         if (name == null || name.isBlank()) {
             throw new InvalidUserNameException("Name cannot be null or blank.");
         }
+    }
+
+    @Override
+    public UpdatePasswordOutput updatePassword(UpdatePasswordInput input) {
+        GetUserByTokenOutput userOutput = input.user();
+        User user = User.with(
+                userOutput.userId(),
+                userOutput.name(),
+                userOutput.email(),
+                userOutput.login(),
+                userOutput.password(),
+                userOutput.address(),
+                userOutput.active(),
+                userOutput.createdAt(),
+                userOutput.updatedAt(),
+                userOutput.deletedAt()
+        );
+
+        String actualPassword = user.getPassword();
+        boolean matchPassword = passwordEncoder.matches(input.oldPassword(), actualPassword);
+
+        if (!matchPassword) {
+            throw new InvalidPasswordException("Old password is invalid.");
+        }
+
+        if (input.newPassword() == null || input.newPassword().isBlank()) {
+            throw new InvalidPasswordException("New password cannot be null or blank.");
+        }
+
+        if (passwordEncoder.matches(input.newPassword(), actualPassword)) {
+            throw new InvalidPasswordException("New password cannot be the same as old password.");
+        }
+
+        user.updatePassword(passwordEncoder.encode(input.newPassword()));
+
+        user = userRepository.update(user);
+
+        return UpdatePasswordOutput.from(user);
     }
 }

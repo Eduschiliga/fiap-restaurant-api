@@ -1,9 +1,6 @@
 package br.com.fiap.restauranteapi.insfrastructure.adapters.inbound.rest.exceptions.handler;
 
-import br.com.fiap.restauranteapi.application.domain.exceptions.InvalidUserNameException;
-import br.com.fiap.restauranteapi.application.domain.exceptions.TokenInvalidoException;
-import br.com.fiap.restauranteapi.application.domain.exceptions.UserNotFoundException;
-import br.com.fiap.restauranteapi.application.domain.exceptions.UsuarioOuSenhaInvalidoException;
+import br.com.fiap.restauranteapi.application.domain.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.security.access.AccessDeniedException;
@@ -38,11 +35,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(
-        {
-            InvalidUserNameException.class,
-            UsuarioOuSenhaInvalidoException.class,
-            TokenInvalidoException.class
-        }
+            {
+                    InvalidUserNameException.class,
+                    UsuarioOuSenhaInvalidoException.class,
+                    TokenInvalidoException.class,
+                    InvalidPasswordException.class
+            }
     )
     protected ProblemDetail handleBadRequest(final RuntimeException ex, final WebRequest request) {
         return buildProblemDetail(ex, HttpStatus.BAD_REQUEST);

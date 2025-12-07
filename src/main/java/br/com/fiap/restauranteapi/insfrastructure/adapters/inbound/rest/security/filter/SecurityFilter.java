@@ -3,6 +3,8 @@ package br.com.fiap.restauranteapi.insfrastructure.adapters.inbound.rest.securit
 import br.com.fiap.restauranteapi.application.domain.exceptions.TokenInvalidoException;
 import br.com.fiap.restauranteapi.application.domain.user.User;
 import br.com.fiap.restauranteapi.application.ports.inbound.auth.ForAuthenticatingUser;
+import br.com.fiap.restauranteapi.application.ports.inbound.auth.ForGettingUserByToken;
+import br.com.fiap.restauranteapi.application.ports.inbound.auth.GetUserByTokenOutput;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,10 +19,10 @@ import java.util.ArrayList;
 
 @Component
 public class SecurityFilter extends OncePerRequestFilter {
-    private final ForAuthenticatingUser forAuthenticatingUser;
+    private final ForGettingUserByToken forGettingUserByToken;
 
-    public SecurityFilter(ForAuthenticatingUser forAuthenticatingUser) {
-        this.forAuthenticatingUser = forAuthenticatingUser;
+    public SecurityFilter(ForGettingUserByToken forGettingUserByToken) {
+        this.forGettingUserByToken = forGettingUserByToken;
     }
 
     @Override
@@ -32,7 +34,7 @@ public class SecurityFilter extends OncePerRequestFilter {
         var token = this.recoverToken(request);
 
         if (token != null && !token.isBlank()) {
-            User user = forAuthenticatingUser.validateToken(token);
+            GetUserByTokenOutput user = forGettingUserByToken.getUserByToken(token);
 
             if (user != null) {
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(

@@ -113,6 +113,12 @@ public class User {
         return this;
     }
 
+    public User updatePassword(String password) {
+        this.password = password;
+        this.updatedAt = LocalDateTime.now();
+        return this;
+    }
+
     public void activate() {
         this.active = true;
         this.deletedAt = null;
