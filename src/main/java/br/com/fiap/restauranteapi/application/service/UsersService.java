@@ -157,19 +157,11 @@ public class UsersService implements
 
     @Override
     public List<ListUsersByNameOutput> findAllByName(String name) {
-        validateUserName(name);
-
         return userRepository
                 .findAllByName(name)
                 .stream()
                 .map(ListUsersByNameOutput::from)
                 .collect(Collectors.toList());
-    }
-
-    private void validateUserName(String name) {
-        if (name == null || name.isBlank()) {
-            throw new InvalidUserNameException("Name cannot be null or blank.");
-        }
     }
 
     @Override
