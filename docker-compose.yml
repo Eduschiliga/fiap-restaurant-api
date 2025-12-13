@@ -1,0 +1,40 @@
+services:
+  postgres:
+    image: postgres:17.0
+    container_name: fiap-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: restaurantdb
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - fiap-network
+
+  fiap-user-service:
+    container_name: fiap-user-service
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: restaurantdb
+      DB_USERNAME: root
+      DB_PASSWORD: root
+      JWT_SECRET: 05b0f768-fe7b-49aa-b934-44ef29634de3
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    networks:
+      - fiap-network
+
+volumes:
+  pgdata:
+
+networks:
+  fiap-network:

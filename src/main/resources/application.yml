@@ -2,7 +2,7 @@ spring:
   application:
     name: restauranteapi
   datasource:
-    url: jdbc:postgresql://localhost:5432/restaurantdb
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:restaurantdb}
     username: ${DB_USERNAME:root}
     password: ${DB_PASSWORD:root}
   jpa:
