@@ -1,7 +1,6 @@
 package br.com.fiap.restauranteapi.infrastructure.adapters.inbound.rest.mapper;
 
 import br.com.fiap.restauranteapi.application.domain.address.AddressId;
-import br.com.fiap.restauranteapi.application.domain.user.User;
 import br.com.fiap.restauranteapi.application.domain.user.UserId;
 import br.com.fiap.restauranteapi.application.ports.inbound.create.user.CreateUserInput;
 import br.com.fiap.restauranteapi.application.ports.inbound.create.user.CreateUserOutput;
@@ -12,13 +11,16 @@ import br.com.fiap.restauranteapi.application.ports.inbound.password.UpdatePassw
 import br.com.fiap.restauranteapi.application.ports.inbound.password.UpdatePasswordOutput;
 import br.com.fiap.restauranteapi.application.ports.inbound.update.user.UpdateUserInput;
 import br.com.fiap.restauranteapi.application.ports.inbound.update.user.UpdateUserOutput;
-import br.com.fiap.restauranteapi.infrastructure.adapters.inbound.rest.model.dto.UserDTO;
-import br.com.fiap.restauranteapi.infrastructure.adapters.inbound.rest.model.dto.create.CreateUserDTO;
-import br.com.fiap.restauranteapi.infrastructure.adapters.inbound.rest.model.dto.update.UpdatePasswordDTO;
-import br.com.fiap.restauranteapi.infrastructure.adapters.inbound.rest.model.dto.update.UpdateUserDTO;
+import br.com.fiap.restauranteapi.model.CreateUserDTO;
+import br.com.fiap.restauranteapi.model.UpdatePasswordDTO;
+import br.com.fiap.restauranteapi.model.UpdateUserDTO;
+import br.com.fiap.restauranteapi.model.UserDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
@@ -31,7 +33,9 @@ public interface UserMapper {
     List<UserDTO> toListDTO(List<ListUsersByNameOutput> output);
 
     CreateUserInput fromDTO(CreateUserDTO dto);
-    UpdateUserInput fromUpdateDTO(UpdateUserDTO dto);
+
+    @Mapping(target = "userId", source = "userId")
+    UpdateUserInput fromUpdateDTO(UpdateUserDTO dto, String userId);
 
     default String map(UserId value) {
         return value != null ? value.toString() : null;
@@ -49,6 +53,10 @@ public interface UserMapper {
         return value != null ? AddressId.from(value) : null;
     }
 
-    @Mapping(target = "userId", source = "user.userId.value")
-    UpdatePasswordInput fromUpdatePasswordDTO(UpdatePasswordDTO updatePasswordDto, User user);
+    @Mapping(target = "userId", source = "userId")
+    UpdatePasswordInput fromUpdatePasswordDTO(UpdatePasswordDTO updatePasswordDto, String userId);
+
+    default OffsetDateTime map(LocalDateTime value) {
+        return value != null ? value.atOffset(ZoneOffset.of("-03:00")) : null;
+    }
 }

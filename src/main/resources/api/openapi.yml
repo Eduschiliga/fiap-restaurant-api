@@ -13,12 +13,14 @@ tags:
     description: Operações de autenticação
   - name: Users
     description: Operações relacionadas à gestão de usuários
+
 paths:
   /api/auth/login:
     post:
       tags:
         - Auth
       summary: Realizar login
+      description: Autentica um usuário e retorna um token JWT.
       operationId: login
       requestBody:
         description: Credenciais de login
@@ -35,6 +37,155 @@ paths:
               schema:
                 $ref: '#/components/schemas/Token'
 
+  /api/users:
+    get:
+      tags:
+        - Users
+      summary: Listar todos os usuários
+      operationId: listUsers
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '200':
+          description: Lista de usuários retornada com sucesso
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+    post:
+      tags:
+        - Users
+      summary: Cria um novo usuário
+      description: Cadastra um usuário (Cliente ou Dono de Restaurante) com seu endereço inicial. Endpoint público.
+      operationId: createUser
+      requestBody:
+        description: Dados para cadastro do usuário
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUser'
+      responses:
+        '201':
+          description: Usuário criado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+    put:
+      tags:
+        - Users
+      summary: Atualizar usuário
+      description: Atualiza os dados cadastrais de um usuário existente.
+      operationId: updateUser
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUser'
+      responses:
+        '200':
+          description: Usuário atualizado com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /api/users/{userId}:
+    get:
+      tags:
+        - Users
+      summary: Buscar usuário por ID
+      operationId: getUserById
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: userId
+          in: path
+          description: ID do usuário
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Usuário encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+    delete:
+      tags:
+        - Users
+      summary: Excluir usuário
+      operationId: deleteUserById
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: userId
+          in: path
+          description: ID do usuário a ser excluído
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Usuário excluído com sucesso (No Content)
+
+  /api/users/search:
+    get:
+      tags:
+        - Users
+      summary: Buscar usuários por nome
+      operationId: listUsersByName
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: name
+          in: query
+          description: Parte do nome para busca
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Lista de usuários encontrados
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+
+  /api/users/password:
+    patch:
+      tags:
+        - Users
+      summary: Atualizar senha
+      description: Endpoint específico para troca de senha. Requer autenticação.
+      operationId: updatePassword
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePassword'
+      responses:
+        '200':
+          description: Senha atualizada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
 
 components:
   securitySchemes:
@@ -44,6 +195,15 @@ components:
       bearerFormat: JWT
 
   schemas:
+    # --- Enums ---
+    UserType:
+      type: string
+      enum:
+        - CLIENT
+        - RESTAURANT_OWNER
+      description: Tipo do usuário (Cliente ou Dono de Restaurante)
+
+    # --- Auth Schemas ---
     Login:
       type: object
       properties:
@@ -54,8 +214,172 @@ components:
       required:
         - login
         - password
+
     Token:
       type: object
       properties:
         token:
           type: string
+
+    # --- Address Schemas ---
+    CreateAddress:
+      type: object
+      properties:
+        street:
+          type: string
+        number:
+          type: string
+        complement:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        zipCode:
+          type: string
+      required:
+        - street
+        - number
+        - city
+        - state
+        - zipCode
+
+    UpdateAddress:
+      type: object
+      properties:
+        addressId:
+          type: string
+          format: uuid
+        street:
+          type: string
+        number:
+          type: string
+        complement:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        zipCode:
+          type: string
+        active:
+          type: boolean
+      required:
+        - addressId
+
+    Address:
+      type: object
+      properties:
+        addressId:
+          type: string
+          format: uuid
+        street:
+          type: string
+        number:
+          type: string
+        complement:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        zipCode:
+          type: string
+        active:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        deletedAt:
+          type: string
+          format: date-time
+
+    # --- User Schemas ---
+    CreateUser:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        login:
+          type: string
+        password:
+          type: string
+          writeOnly: true
+        address:
+          $ref: '#/components/schemas/CreateAddress'
+        userType:
+          $ref: '#/components/schemas/UserType'
+        active:
+          type: boolean
+          default: true
+      required:
+        - name
+        - email
+        - login
+        - password
+        - userType
+        - active
+
+    UpdateUser:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        login:
+          type: string
+        address:
+          $ref: '#/components/schemas/UpdateAddress'
+        active:
+          type: boolean
+        userType:
+          $ref: '#/components/schemas/UserType'
+      required:
+        - userId
+
+    UpdatePassword:
+      type: object
+      properties:
+        newPassword:
+          type: string
+        oldPassword:
+          type: string
+      required:
+        - newPassword
+        - oldPassword
+
+    User:
+      type: object
+      properties:
+        userId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        email:
+          type: string
+        login:
+          type: string
+        address:
+          $ref: '#/components/schemas/Address'
+        userType:
+          $ref: '#/components/schemas/UserType'
+        active:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        deletedAt:
+          type: string
+          format: date-time

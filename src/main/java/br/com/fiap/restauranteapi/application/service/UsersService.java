@@ -2,7 +2,6 @@ package br.com.fiap.restauranteapi.application.service;
 
 import br.com.fiap.restauranteapi.application.domain.address.Address;
 import br.com.fiap.restauranteapi.application.domain.exceptions.InvalidPasswordException;
-import br.com.fiap.restauranteapi.application.domain.exceptions.InvalidUserNameException;
 import br.com.fiap.restauranteapi.application.domain.exceptions.UserNotFoundException;
 import br.com.fiap.restauranteapi.application.domain.user.User;
 import br.com.fiap.restauranteapi.application.domain.user.UserId;
@@ -145,7 +144,6 @@ public class UsersService implements
                 input.name(),
                 input.email(),
                 input.login(),
-                input.password(),
                 address,
                 input.active()
         );

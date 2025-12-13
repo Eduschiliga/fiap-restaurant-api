@@ -1,7 +1,6 @@
 package br.com.fiap.restauranteapi.application.domain.user;
 
 import br.com.fiap.restauranteapi.application.domain.address.Address;
-import org.mapstruct.control.MappingControl;
 
 import java.time.LocalDateTime;
 
@@ -101,7 +100,6 @@ public class User {
             String name,
             String email,
             String login,
-            String password,
             Address address,
             Boolean active
     ) {
@@ -114,7 +112,6 @@ public class User {
         this.name = name;
         this.email = email;
         this.login = login;
-        this.password = password;
         this.address = address;
         this.updatedAt = LocalDateTime.now();
 

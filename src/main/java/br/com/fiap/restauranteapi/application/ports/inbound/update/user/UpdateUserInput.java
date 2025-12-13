@@ -8,7 +8,6 @@ public record UpdateUserInput(
         String name,
         String login,
         String email,
-        String password,
         UpdateAddressInput address,
         Boolean active,
         UserType userType

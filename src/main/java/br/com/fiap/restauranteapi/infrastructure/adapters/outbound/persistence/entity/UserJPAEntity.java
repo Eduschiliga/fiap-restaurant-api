@@ -212,4 +212,12 @@ public class UserJPAEntity {
     public LocalDateTime getDeletedAt() {
         return deletedAt;
     }
+
+    public UserType getUserType() {
+        return userType;
+    }
+
+    public void setUserType(UserType userType) {
+        this.userType = userType;
+    }
 }

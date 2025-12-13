@@ -1,5 +1,6 @@
 package br.com.fiap.restauranteapi.infrastructure.adapters.inbound.rest;
 
+import br.com.fiap.restauranteapi.api.UsersApi;
 import br.com.fiap.restauranteapi.application.ports.inbound.create.ForCreatingUser;
 import br.com.fiap.restauranteapi.application.ports.inbound.create.user.CreateUserInput;
 import br.com.fiap.restauranteapi.application.ports.inbound.create.user.CreateUserOutput;
@@ -17,24 +18,25 @@ import br.com.fiap.restauranteapi.application.ports.inbound.update.ForUpdatingUs
 import br.com.fiap.restauranteapi.application.ports.inbound.update.user.UpdateUserInput;
 import br.com.fiap.restauranteapi.application.ports.inbound.update.user.UpdateUserOutput;
 import br.com.fiap.restauranteapi.infrastructure.adapters.inbound.rest.mapper.UserMapper;
-import br.com.fiap.restauranteapi.infrastructure.adapters.inbound.rest.model.dto.UserDTO;
-import br.com.fiap.restauranteapi.infrastructure.adapters.inbound.rest.model.dto.create.CreateUserDTO;
-import br.com.fiap.restauranteapi.infrastructure.adapters.inbound.rest.model.dto.update.UpdatePasswordDTO;
-import br.com.fiap.restauranteapi.infrastructure.adapters.inbound.rest.model.dto.update.UpdateUserDTO;
 import br.com.fiap.restauranteapi.infrastructure.adapters.inbound.rest.security.model.CustomUserDetails;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import br.com.fiap.restauranteapi.model.CreateUserDTO;
+import br.com.fiap.restauranteapi.model.UpdatePasswordDTO;
+import br.com.fiap.restauranteapi.model.UpdateUserDTO;
+import br.com.fiap.restauranteapi.model.UserDTO;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("api/users")
-public class UserController {
+public class UserController implements UsersApi {
     private final ForCreatingUser forCreatingUser;
     private final ForUpdatingUser forUpdatingUser;
     private final ForDeletingUserById forDeletingUserById;
@@ -65,51 +67,50 @@ public class UserController {
         this.userMapper = userMapper;
     }
 
-    @PostMapping
-    public ResponseEntity<UserDTO> createUser(
-            @RequestBody CreateUserDTO userDTO
-    ) {
-        CreateUserInput useCaseInput = userMapper.fromDTO(userDTO);
+    @Override
+    public ResponseEntity<UserDTO> createUser(CreateUserDTO createUserDTO) {
+        CreateUserInput useCaseInput = userMapper.fromDTO(createUserDTO);
         CreateUserOutput useCaseOutput = forCreatingUser.create(useCaseInput);
 
         URI uri = URI.create("/users/" + useCaseOutput.userId());
         return ResponseEntity.created(uri).body(userMapper.toDTO(useCaseOutput));
     }
 
-    @PutMapping
+    @Override
     public ResponseEntity<UserDTO> updateUser(
             @RequestBody UpdateUserDTO userDTO
     ) {
-        UpdateUserInput useCaseInput = userMapper.fromUpdateDTO(userDTO);
+        String userId = getAuthenticatedUserId();
+
+        UpdateUserInput useCaseInput = userMapper.fromUpdateDTO(userDTO, userId);
         UpdateUserOutput useCaseOutput = forUpdatingUser.updateUser(useCaseInput);
 
         return ResponseEntity.ok(userMapper.toDTO(useCaseOutput));
     }
 
-    @DeleteMapping("{userId}")
+    @Override
     public ResponseEntity<Void> deleteUserById(@PathVariable UUID userId) {
         forDeletingUserById.deleteUserById(userId.toString());
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("{userId}")
+    @Override
     public ResponseEntity<UserDTO> getUserById(@PathVariable UUID userId) {
         GetUserByIdOutput useCaseOutput = forGettingUserById.getUserById(userId.toString());
-        UserDTO userDTO = userMapper.toDTO(useCaseOutput);
 
-        return ResponseEntity.ok().body(userDTO);
+        return ResponseEntity.ok().body(userMapper.toDTO(useCaseOutput));
     }
 
-    @GetMapping
+    @Override
     public ResponseEntity<List<UserDTO>> listUsers() {
         List<ListUserOutput> userOutputList = forListingUser.listUers();
         List<UserDTO> userList = userMapper.toDTO(userOutputList);
         return ResponseEntity.ok().body(userList);
     }
 
-    @GetMapping("search")
+    @Override
     public ResponseEntity<List<UserDTO>> listUsersByName(
-            @RequestParam @NotNull @NotBlank String name
+            @RequestParam String name
     ) {
         List<ListUsersByNameOutput> userOutputList = forListingsUsersByName.findAllByName(name);
         List<UserDTO> userList = userMapper.toListDTO(userOutputList);
@@ -117,15 +118,23 @@ public class UserController {
         return ResponseEntity.ok().body(userList);
     }
 
-    @PatchMapping("password")
-    public ResponseEntity<UserDTO> updatePassword(
-            @RequestBody UpdatePasswordDTO updatePasswordDto,
-            @AuthenticationPrincipal CustomUserDetails userDetails
-    ) {
-        UpdatePasswordInput useCaseInput = userMapper.fromUpdatePasswordDTO(updatePasswordDto, userDetails.getUser());
+    @Override
+    public ResponseEntity<UserDTO> updatePassword(@RequestBody UpdatePasswordDTO updatePasswordDto) {
+        String userId = getAuthenticatedUserId();
+
+        UpdatePasswordInput useCaseInput = userMapper.fromUpdatePasswordDTO(updatePasswordDto, userId);
         UpdatePasswordOutput useCaseOutput = forUpdatingPassword.updatePassword(useCaseInput);
 
         return ResponseEntity.ok(userMapper.toDTO(useCaseOutput));
     }
 
+    private String getAuthenticatedUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && authentication.getPrincipal() instanceof CustomUserDetails userDetails) {
+            return userDetails.getId(); // Retorna String, não User
+        }
+
+        throw new IllegalStateException("Usuário não autenticado.");
+    }
 }

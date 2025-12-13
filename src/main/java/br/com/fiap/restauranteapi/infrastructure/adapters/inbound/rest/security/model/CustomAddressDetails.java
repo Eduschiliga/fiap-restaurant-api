@@ -1,23 +1,23 @@
-package br.com.fiap.restauranteapi.infrastructure.adapters.inbound.rest.model.dto;
+package br.com.fiap.restauranteapi.infrastructure.adapters.inbound.rest.security.model;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
-public class AddressDTO {
-    private UUID addressId;
-    private String street;
-    private String number;
-    private String complement;
-    private String city;
-    private String state;
-    private String zipCode;
+public class CustomAddressDetails {
+    private final String addressId;
+    private final String street;
+    private final String number;
+    private final String complement;
+    private final String city;
+    private final String state;
+    private final String zipCode;
+
     private Boolean active;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime deletedAt;
 
-    public AddressDTO(
-            UUID addressId,
+    public CustomAddressDetails(
+            String addressId,
             String street,
             String number,
             String complement,
@@ -42,91 +42,47 @@ public class AddressDTO {
         this.deletedAt = deletedAt;
     }
 
-    public UUID getAddressId() {
+    public String getAddressId() {
         return addressId;
-    }
-
-    public void setAddressId(UUID addressId) {
-        this.addressId = addressId;
     }
 
     public String getStreet() {
         return street;
     }
 
-    public void setStreet(String street) {
-        this.street = street;
-    }
-
     public String getNumber() {
         return number;
-    }
-
-    public void setNumber(String number) {
-        this.number = number;
     }
 
     public String getComplement() {
         return complement;
     }
 
-    public void setComplement(String complement) {
-        this.complement = complement;
-    }
-
     public String getCity() {
         return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
     }
 
     public String getState() {
         return state;
     }
 
-    public void setState(String state) {
-        this.state = state;
-    }
-
     public String getZipCode() {
         return zipCode;
-    }
-
-    public void setZipCode(String zipCode) {
-        this.zipCode = zipCode;
     }
 
     public Boolean getActive() {
         return active;
     }
 
-    public void setActive(Boolean active) {
-        this.active = active;
-    }
-
     public LocalDateTime getCreatedAt() {
         return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
     }
 
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
     public LocalDateTime getDeletedAt() {
         return deletedAt;
-    }
-
-    public void setDeletedAt(LocalDateTime deletedAt) {
-        this.deletedAt = deletedAt;
     }
 }

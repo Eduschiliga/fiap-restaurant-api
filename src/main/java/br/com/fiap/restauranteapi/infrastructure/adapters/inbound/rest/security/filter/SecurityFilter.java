@@ -1,8 +1,8 @@
 package br.com.fiap.restauranteapi.infrastructure.adapters.inbound.rest.security.filter;
 
-import br.com.fiap.restauranteapi.application.domain.user.User;
 import br.com.fiap.restauranteapi.application.ports.inbound.auth.ForGettingUserByToken;
 import br.com.fiap.restauranteapi.application.ports.inbound.auth.GetUserByTokenOutput;
+import br.com.fiap.restauranteapi.infrastructure.adapters.inbound.rest.security.model.CustomAddressDetails;
 import br.com.fiap.restauranteapi.infrastructure.adapters.inbound.rest.security.model.CustomUserDetails;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -35,21 +35,31 @@ public class SecurityFilter extends OncePerRequestFilter {
             GetUserByTokenOutput output = forGettingUserByToken.getUserByToken(token);
 
             if (output != null) {
-                User userDomain = User.with(
-                        output.userId(),
+                CustomUserDetails userDetails = new CustomUserDetails(
+                        output.userId().value(),
                         output.name(),
                         output.email(),
                         output.login(),
                         output.password(),
-                        output.address(),
+                        new CustomAddressDetails(
+                                output.address().getAddressId().value(),
+                                output.address().getStreet(),
+                                output.address().getNumber(),
+                                output.address().getComplement(),
+                                output.address().getCity(),
+                                output.address().getState(),
+                                output.address().getZipCode(),
+                                output.address().getActive(),
+                                output.address().getCreatedAt(),
+                                output.address().getUpdatedAt(),
+                                output.address().getDeletedAt()
+                        ),
                         output.userType(),
                         output.active(),
                         output.createdAt(),
                         output.updatedAt(),
                         output.deletedAt()
                 );
-
-                CustomUserDetails userDetails = new CustomUserDetails(userDomain);
 
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                         userDetails,
