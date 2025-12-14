@@ -1,9 +1,9 @@
 package br.com.fiap.restauranteapi.infrastructure.adapters.inbound.rest.security.service;
 
+import br.com.fiap.restauranteapi.application.domain.user.User;
+import br.com.fiap.restauranteapi.application.ports.outbound.repository.UserRepository;
 import br.com.fiap.restauranteapi.infrastructure.adapters.inbound.rest.security.model.AddressDetails;
 import br.com.fiap.restauranteapi.infrastructure.adapters.inbound.rest.security.model.UserDetailsImpl;
-import br.com.fiap.restauranteapi.infrastructure.adapters.outbound.persistence.entity.UserJPAEntity;
-import br.com.fiap.restauranteapi.infrastructure.adapters.outbound.persistence.repository.UserJPARepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -11,43 +11,48 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class SecurityUserDetailsService implements UserDetailsService {
-    private final UserJPARepository userRepository;
+    private final UserRepository userRepository;
 
-    public SecurityUserDetailsService(UserJPARepository userRepository) {
+    public SecurityUserDetailsService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
     @Override
     public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
-        UserJPAEntity user = userRepository.findByLogin(login)
+        User user = userRepository.findByLogin(login)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
 
         return new UserDetailsImpl(
-                user.getUserId(),
+                user.getUserId().value(),
                 user.getName(),
                 user.getEmail(),
                 user.getLogin(),
                 user.getPassword(),
-                user.getAddress() != null ?
-                new AddressDetails(
-                        user.getAddress().getAddressId(),
-                        user.getAddress().getStreet(),
-                        user.getAddress().getNumber(),
-                        user.getAddress().getComplement(),
-                        user.getAddress().getCity(),
-                        user.getAddress().getState(),
-                        user.getAddress().getZipCode(),
-                        user.getAddress().getActive(),
-                        user.getAddress().getCreatedAt(),
-                        user.getAddress().getUpdatedAt(),
-                        user.getAddress().getDeletedAt()
-                ) : null,
+                mapAddress(user.getAddress()),
                 user.getUserType(),
                 user.getActive(),
                 user.getCreatedAt(),
                 user.getUpdatedAt(),
                 user.getDeletedAt()
+        );
+    }
 
+    private AddressDetails mapAddress(br.com.fiap.restauranteapi.application.domain.address.Address address) {
+        if (address == null) {
+            return null;
+        }
+        return new AddressDetails(
+                address.getAddressId() != null ? address.getAddressId().value() : null,
+                address.getStreet(),
+                address.getNumber(),
+                address.getComplement(),
+                address.getCity(),
+                address.getState(),
+                address.getZipCode(),
+                address.getActive(),
+                address.getCreatedAt(),
+                address.getUpdatedAt(),
+                address.getDeletedAt()
         );
     }
 }

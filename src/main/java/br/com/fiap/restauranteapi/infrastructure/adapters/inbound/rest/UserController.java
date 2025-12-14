@@ -96,14 +96,14 @@ public class UserController implements UsersApi {
 
     @Override
     public ResponseEntity<UserDTO> getUserById(@PathVariable UUID userId) {
-        GetUserByIdOutput useCaseOutput = forGettingUserById.getUserById(userId.toString());
+        GetUserByIdOutput useCaseOutput = forGettingUserById.findUserById(userId.toString());
 
         return ResponseEntity.ok().body(userMapper.toDTO(useCaseOutput));
     }
 
     @Override
     public ResponseEntity<List<UserDTO>> listUsers() {
-        List<ListUserOutput> userOutputList = forListingUser.listUers();
+        List<ListUserOutput> userOutputList = forListingUser.listUsers();
         List<UserDTO> userList = userMapper.toDTO(userOutputList);
         return ResponseEntity.ok().body(userList);
     }

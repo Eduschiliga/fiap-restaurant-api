@@ -4,6 +4,6 @@ import java.util.List;
 
 public interface ForListingUser {
 
-    List<ListUserOutput> listUers();
+    List<ListUserOutput> listUsers();
 
 }

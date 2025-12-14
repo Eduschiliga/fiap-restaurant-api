@@ -14,7 +14,7 @@ import java.time.Instant;
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-git    private ProblemDetail buildProblemDetail(final RuntimeException ex, final HttpStatus status) {
+    private ProblemDetail buildProblemDetail(final RuntimeException ex, final HttpStatus status) {
         ProblemDetail problemDetail = ProblemDetail.forStatus(status);
         problemDetail.setTitle(status.getReasonPhrase());
         problemDetail.setDetail(ex.getMessage());
