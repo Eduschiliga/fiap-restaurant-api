@@ -1,7 +1,7 @@
 package br.com.fiap.restauranteapi.infrastructure.adapters.inbound.rest.security.service;
 
-import br.com.fiap.restauranteapi.infrastructure.adapters.inbound.rest.security.model.CustomAddressDetails;
-import br.com.fiap.restauranteapi.infrastructure.adapters.inbound.rest.security.model.CustomUserDetails;
+import br.com.fiap.restauranteapi.infrastructure.adapters.inbound.rest.security.model.AddressDetails;
+import br.com.fiap.restauranteapi.infrastructure.adapters.inbound.rest.security.model.UserDetailsImpl;
 import br.com.fiap.restauranteapi.infrastructure.adapters.outbound.persistence.entity.UserJPAEntity;
 import br.com.fiap.restauranteapi.infrastructure.adapters.outbound.persistence.repository.UserJPARepository;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,13 +22,14 @@ public class SecurityUserDetailsService implements UserDetailsService {
         UserJPAEntity user = userRepository.findByLogin(login)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
 
-        return new CustomUserDetails(
+        return new UserDetailsImpl(
                 user.getUserId(),
                 user.getName(),
                 user.getEmail(),
                 user.getLogin(),
                 user.getPassword(),
-                new CustomAddressDetails(
+                user.getAddress() != null ?
+                new AddressDetails(
                         user.getAddress().getAddressId(),
                         user.getAddress().getStreet(),
                         user.getAddress().getNumber(),
@@ -40,7 +41,7 @@ public class SecurityUserDetailsService implements UserDetailsService {
                         user.getAddress().getCreatedAt(),
                         user.getAddress().getUpdatedAt(),
                         user.getAddress().getDeletedAt()
-                ),
+                ) : null,
                 user.getUserType(),
                 user.getActive(),
                 user.getCreatedAt(),

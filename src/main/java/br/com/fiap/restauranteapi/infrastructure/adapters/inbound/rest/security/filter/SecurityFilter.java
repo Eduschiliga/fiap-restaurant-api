@@ -2,8 +2,8 @@ package br.com.fiap.restauranteapi.infrastructure.adapters.inbound.rest.security
 
 import br.com.fiap.restauranteapi.application.ports.inbound.auth.ForGettingUserByToken;
 import br.com.fiap.restauranteapi.application.ports.inbound.auth.GetUserByTokenOutput;
-import br.com.fiap.restauranteapi.infrastructure.adapters.inbound.rest.security.model.CustomAddressDetails;
-import br.com.fiap.restauranteapi.infrastructure.adapters.inbound.rest.security.model.CustomUserDetails;
+import br.com.fiap.restauranteapi.infrastructure.adapters.inbound.rest.security.model.AddressDetails;
+import br.com.fiap.restauranteapi.infrastructure.adapters.inbound.rest.security.model.UserDetailsImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,13 +35,14 @@ public class SecurityFilter extends OncePerRequestFilter {
             GetUserByTokenOutput output = forGettingUserByToken.getUserByToken(token);
 
             if (output != null) {
-                CustomUserDetails userDetails = new CustomUserDetails(
+                UserDetailsImpl userDetails = new UserDetailsImpl(
                         output.userId().value(),
                         output.name(),
                         output.email(),
                         output.login(),
                         output.password(),
-                        new CustomAddressDetails(
+                        output.address() != null ?
+                        new AddressDetails(
                                 output.address().getAddressId().value(),
                                 output.address().getStreet(),
                                 output.address().getNumber(),
@@ -53,7 +54,7 @@ public class SecurityFilter extends OncePerRequestFilter {
                                 output.address().getCreatedAt(),
                                 output.address().getUpdatedAt(),
                                 output.address().getDeletedAt()
-                        ),
+                        ) : null,
                         output.userType(),
                         output.active(),
                         output.createdAt(),
@@ -75,8 +76,12 @@ public class SecurityFilter extends OncePerRequestFilter {
     }
 
     private String recoverToken(HttpServletRequest request) {
-        var authHeader = request.getHeader("Authorization");
-        if (authHeader == null) return null;
+        String authHeader = request.getHeader("Authorization");
+
+        if (authHeader == null) {
+            return null;
+        }
+
         return authHeader.replace("Bearer ", "");
     }
 }

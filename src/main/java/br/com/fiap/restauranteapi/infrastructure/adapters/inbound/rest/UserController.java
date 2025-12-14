@@ -18,7 +18,7 @@ import br.com.fiap.restauranteapi.application.ports.inbound.update.ForUpdatingUs
 import br.com.fiap.restauranteapi.application.ports.inbound.update.user.UpdateUserInput;
 import br.com.fiap.restauranteapi.application.ports.inbound.update.user.UpdateUserOutput;
 import br.com.fiap.restauranteapi.infrastructure.adapters.inbound.rest.mapper.UserMapper;
-import br.com.fiap.restauranteapi.infrastructure.adapters.inbound.rest.security.model.CustomUserDetails;
+import br.com.fiap.restauranteapi.infrastructure.adapters.inbound.rest.security.model.UserDetailsImpl;
 import br.com.fiap.restauranteapi.model.CreateUserDTO;
 import br.com.fiap.restauranteapi.model.UpdatePasswordDTO;
 import br.com.fiap.restauranteapi.model.UpdateUserDTO;
@@ -131,8 +131,8 @@ public class UserController implements UsersApi {
     private String getAuthenticatedUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (authentication != null && authentication.getPrincipal() instanceof CustomUserDetails userDetails) {
-            return userDetails.getId(); // Retorna String, não User
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetailsImpl userDetails) {
+            return userDetails.getId();
         }
 
         throw new IllegalStateException("Usuário não autenticado.");

@@ -23,13 +23,14 @@ import br.com.fiap.restauranteapi.application.ports.inbound.update.user.UpdateUs
 import br.com.fiap.restauranteapi.application.ports.inbound.update.user.UpdateUserOutput;
 import br.com.fiap.restauranteapi.application.ports.outbound.password.PasswordEncoderPort;
 import br.com.fiap.restauranteapi.application.ports.outbound.repository.UserRepository;
-import org.springframework.stereotype.Service;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-@Service
+@Named
 public class UsersService implements
         ForCreatingUser,
         ForUpdatingUser,
@@ -40,10 +41,11 @@ public class UsersService implements
         ForUpdatingPassword
 {
 
-    private final PasswordEncoderPort passwordEncoder;
     private final UserRepository userRepository;
+    private final PasswordEncoderPort passwordEncoder;
 
-    public UsersService(UserRepository userRepository, PasswordEncoderPort passwordEncoder) {
+    @Inject
+    public UsersService(final UserRepository userRepository, final PasswordEncoderPort passwordEncoder) {
         this.userRepository = Objects.requireNonNull(userRepository);
         this.passwordEncoder = Objects.requireNonNull(passwordEncoder);
     }

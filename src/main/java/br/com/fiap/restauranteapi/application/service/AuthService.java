@@ -8,9 +8,12 @@ import br.com.fiap.restauranteapi.application.ports.inbound.auth.*;
 import br.com.fiap.restauranteapi.application.ports.outbound.password.PasswordEncoderPort;
 import br.com.fiap.restauranteapi.application.ports.outbound.repository.UserRepository;
 import br.com.fiap.restauranteapi.application.ports.outbound.token.TokenGateway;
-import org.springframework.stereotype.Service;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
-@Service
+import java.util.Objects;
+
+@Named
 public class AuthService implements
         ForAuthenticatingUser,
         ForGettingUserByToken
@@ -19,12 +22,15 @@ public class AuthService implements
     private final PasswordEncoderPort passwordEncoder;
     private final TokenGateway tokenGateway;
 
-    public AuthService(UserRepository userRepository,
-                       PasswordEncoderPort passwordEncoder,
-                       TokenGateway tokenGateway) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.tokenGateway = tokenGateway;
+    @Inject
+    public AuthService(
+            final UserRepository userRepository,
+            final PasswordEncoderPort passwordEncoder,
+            final TokenGateway tokenGateway
+    ) {
+        this.userRepository = Objects.requireNonNull(userRepository);
+        this.passwordEncoder = Objects.requireNonNull(passwordEncoder);
+        this.tokenGateway = Objects.requireNonNull(tokenGateway);
     }
 
     @Override
