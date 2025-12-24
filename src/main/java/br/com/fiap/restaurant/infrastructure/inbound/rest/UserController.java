@@ -78,9 +78,7 @@ public class UserController implements UsersApi {
     }
 
     @Override
-    public ResponseEntity<UserDTO> updateUser(@Valid @RequestBody UpdateUserDTO userDTO) {
-        String userId = getAuthenticatedUserId();
-
+    public ResponseEntity<UserDTO> updateUser(@PathVariable UUID userId, @Valid @RequestBody UpdateUserDTO userDTO) {
         UpdateUserInput useCaseInput = userMapper.fromUpdateDTO(userDTO, userId);
         UpdateUserOutput useCaseOutput = updateUserInputPort.updateUser(useCaseInput);
 
@@ -116,22 +114,10 @@ public class UserController implements UsersApi {
     }
 
     @Override
-    public ResponseEntity<UserDTO> updatePassword(@RequestBody UpdatePasswordDTO updatePasswordDto) {
-        String userId = getAuthenticatedUserId();
-
+    public ResponseEntity<UserDTO> updatePassword(@PathVariable UUID userId, @RequestBody UpdatePasswordDTO updatePasswordDto) {
         UpdatePasswordInput useCaseInput = userMapper.fromUpdatePasswordDTO(updatePasswordDto, userId);
         UpdatePasswordOutput useCaseOutput = forUpdatingPassword.updatePassword(useCaseInput);
 
         return ResponseEntity.ok(userMapper.toDTO(useCaseOutput));
-    }
-
-    private String getAuthenticatedUserId() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if (authentication != null && authentication.getPrincipal() instanceof UserDetailsImpl userDetails) {
-            return userDetails.getId();
-        }
-
-        throw new IllegalStateException("Usuário não autenticado.");
     }
 }

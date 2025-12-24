@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
+import java.util.UUID;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
@@ -35,10 +36,10 @@ public interface UserMapper {
     CreateUserInput fromDTO(CreateUserDTO dto);
 
     @Mapping(target = "userId", source = "userId")
-    UpdateUserInput fromUpdateDTO(UpdateUserDTO dto, String userId);
+    UpdateUserInput fromUpdateDTO(UpdateUserDTO dto, UUID userId);
 
     @Mapping(target = "userId", source = "userId")
-    UpdatePasswordInput fromUpdatePasswordDTO(UpdatePasswordDTO updatePasswordDto, String userId);
+    UpdatePasswordInput fromUpdatePasswordDTO(UpdatePasswordDTO updatePasswordDto, UUID userId);
 
     default String map(UserId value) {
         return value != null ? value.toString() : null;
