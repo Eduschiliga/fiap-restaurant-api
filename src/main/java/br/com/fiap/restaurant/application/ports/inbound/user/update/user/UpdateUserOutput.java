@@ -24,8 +24,8 @@ public record UpdateUserOutput(
         return new UpdateUserOutput(
                 user.getUserId(),
                 user.getName(),
-                user.getEmail(),
                 user.getLogin(),
+                user.getEmail(),
                 user.getPassword(),
                 user.getAddress(),
                 user.getActive(),
