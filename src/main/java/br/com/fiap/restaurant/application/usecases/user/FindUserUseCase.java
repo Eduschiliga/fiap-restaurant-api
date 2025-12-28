@@ -10,14 +10,11 @@ import br.com.fiap.restaurant.application.ports.inbound.user.get.output.GetUserB
 import br.com.fiap.restaurant.application.ports.inbound.user.list.ForListingUser;
 import br.com.fiap.restaurant.application.ports.inbound.user.list.ForListingUsersByName;
 import br.com.fiap.restaurant.application.ports.inbound.user.list.output.ListUserOutput;
-import br.com.fiap.restaurant.application.ports.inbound.user.list.output.ListUsersByNameOutput;
 import br.com.fiap.restaurant.application.ports.outbound.repository.UserRepositoryPort;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Named
 public class FindUserUseCase implements
@@ -59,11 +56,9 @@ public class FindUserUseCase implements
 
 
     @Override
-    public List<ListUsersByNameOutput> findAllByName(String name) {
+    public Pagination<ListUserOutput> findAllByName(final Integer page, final Integer perPage, String name) {
         return userRepositoryPort
-                .findAllByName(name)
-                .stream()
-                .map(ListUsersByNameOutput::from)
-                .collect(Collectors.toList());
+                .findAllByName(page, perPage, name)
+                .mapItems(ListUserOutput::from);
     }
 }

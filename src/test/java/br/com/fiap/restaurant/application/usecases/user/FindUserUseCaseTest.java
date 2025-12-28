@@ -7,7 +7,6 @@ import br.com.fiap.restaurant.application.domain.user.UserId;
 import br.com.fiap.restaurant.application.domain.user.UserType;
 import br.com.fiap.restaurant.application.ports.inbound.user.get.output.GetUserByIdOutput;
 import br.com.fiap.restaurant.application.ports.inbound.user.list.output.ListUserOutput;
-import br.com.fiap.restaurant.application.ports.inbound.user.list.output.ListUsersByNameOutput;
 import br.com.fiap.restaurant.application.ports.outbound.repository.UserRepositoryPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -86,29 +85,37 @@ class FindUserUseCaseTest {
     @Test
     void shouldFindAllByNameSuccessfully() {
         String name = "John";
+        int page = 0;
+        int perPage = 10;
         User user = User.with(new UserId("1"), "John Doe", "john@test.com", "john", "pass", null, UserType.CLIENT, true, null, null, null);
 
-        when(userRepositoryPort.findAllByName(name)).thenReturn(List.of(user));
+        when(userRepositoryPort.findAllByName(page, perPage, name))
+                .thenReturn(new Pagination<>(page, perPage, 1, List.of(user)));
 
-        List<ListUsersByNameOutput> result = findUserUseCase.findAllByName(name);
+        Pagination<ListUserOutput> result = findUserUseCase.findAllByName(page, perPage, name);
 
         assertNotNull(result);
-        assertFalse(result.isEmpty());
-        assertEquals(1, result.size());
-        assertEquals("John Doe", result.getFirst().name());
-        verify(userRepositoryPort).findAllByName(name);
+        assertFalse(result.items().isEmpty());
+        assertEquals(1, result.totalItems());
+        assertEquals("John Doe", result.items().getFirst().name());
+
+        verify(userRepositoryPort).findAllByName(page, perPage, name);
     }
 
     @Test
     void shouldReturnEmptyListWhenNoUserFoundByName() {
         String name = "NonExistent";
+        int page = 0;
+        int perPage = 10;
 
-        when(userRepositoryPort.findAllByName(name)).thenReturn(List.of());
+        when(userRepositoryPort.findAllByName(page, perPage, name))
+                .thenReturn(new Pagination<>(page, perPage, 0, List.of()));
 
-        List<ListUsersByNameOutput> result = findUserUseCase.findAllByName(name);
+        Pagination<ListUserOutput> result = findUserUseCase.findAllByName(page, perPage, name);
 
         assertNotNull(result);
-        assertTrue(result.isEmpty());
-        verify(userRepositoryPort).findAllByName(name);
+        assertTrue(result.items().isEmpty());
+
+        verify(userRepositoryPort).findAllByName(page, perPage, name);
     }
 }

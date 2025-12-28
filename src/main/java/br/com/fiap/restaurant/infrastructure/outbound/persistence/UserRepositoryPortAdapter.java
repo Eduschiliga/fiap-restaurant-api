@@ -6,10 +6,10 @@ import br.com.fiap.restaurant.application.domain.user.UserId;
 import br.com.fiap.restaurant.application.ports.outbound.repository.UserRepositoryPort;
 import br.com.fiap.restaurant.infrastructure.outbound.persistence.entity.UserJPAEntity;
 import br.com.fiap.restaurant.infrastructure.outbound.persistence.repository.UserJPARepository;
+import br.com.fiap.restaurant.infrastructure.outbound.persistence.repository.UserJpaSpecification;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -46,8 +46,18 @@ public class UserRepositoryPortAdapter implements UserRepositoryPort {
     }
 
     @Override
-    public List<User> findAllByName(String name) {
-        return userJPARepository.findAllByName(name).stream().map(UserJPAEntity::toUser).toList();
+    public Pagination<User> findAllByName(int pageSize, int pageNumber, String name) {
+        final var withPage = Pageable.ofSize(pageSize).withPage(pageNumber);
+        final var withSpec = UserJpaSpecification.create(name);
+
+        final var page = userJPARepository.findAll(withSpec, withPage);
+
+        return new Pagination<User>(
+                page.getNumber(),
+                page.getSize(),
+                page.getTotalElements(),
+                page.map(UserJPAEntity::toUser).toList()
+        );
     }
 
     @Override

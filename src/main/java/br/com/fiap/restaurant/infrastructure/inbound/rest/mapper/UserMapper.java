@@ -27,9 +27,8 @@ public interface UserMapper {
     UserDTO toDTO(UpdatePasswordOutput output);
     UserDTO toDTO(UpdateUserOutput output);
     UserDTO toDTO(GetUserByIdOutput output);
-    PaginatedUsersDTO paginatedUsertoDTO(ListUserOutput output);
     List<UserDTO> toListDTO(List<ListUsersByNameOutput> output);
-
+    UserDTO toDTO(ListUserOutput output);
     CreateUserInput fromDTO(CreateUserDTO dto);
 
     @Mapping(target = "userId", source = "userId")

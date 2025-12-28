@@ -8,14 +8,14 @@ info:
 servers:
   - url: http://localhost:8080
     description: Local Server
-security:
-  - bearerAuth: [ ]
 tags:
   - name: Auth
     description: Authentication operations
   - name: Users
     description: Operations related to user management
 
+security:
+  - bearerAuth: [ ]
 paths:
   /api/auth/login:
     post:
@@ -49,9 +49,6 @@ paths:
       parameters:
         - $ref: '#/components/parameters/Page'
         - $ref: '#/components/parameters/PerPage'
-
-      security:
-        - bearerAuth: [ ]
       responses:
         '200':
           description: List of users returned successfully
@@ -97,8 +94,6 @@ paths:
       summary: Update user
       description: Updates registration data of an existing user.
       operationId: updateUser
-      security:
-        - bearerAuth: [ ]
       requestBody:
         required: true
         content:
@@ -118,8 +113,6 @@ paths:
         - Users
       summary: Get user by ID
       operationId: getUserById
-      security:
-        - bearerAuth: [ ]
       parameters:
         - name: userId
           in: path
@@ -140,8 +133,6 @@ paths:
         - Users
       summary: Delete user
       operationId: deleteUserById
-      security:
-        - bearerAuth: [ ]
       parameters:
         - name: userId
           in: path
@@ -160,24 +151,18 @@ paths:
         - Users
       summary: Search users by name
       operationId: listUsersByName
-      security:
-        - bearerAuth: [ ]
       parameters:
-        - name: name
-          in: query
-          description: Part of the name for search
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+        - $ref: '#/components/parameters/Name'
+
       responses:
         '200':
-          description: List of users found
+          description: List of users returned successfully
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/PaginatedUsers'
 
   /api/users/{userId}/password:
     parameters:
@@ -195,8 +180,6 @@ paths:
       summary: Update password
       description: Specific endpoint for password change. Requires authentication.
       operationId: updatePassword
-      security:
-        - bearerAuth: [ ]
       requestBody:
         required: true
         content:
@@ -217,6 +200,7 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
+      in: header
 
   parameters:
     Page:
@@ -232,13 +216,21 @@ components:
     PerPage:
       name: perPage
       in: query
-      description: NNumber of items per page (default is 10)
+      description: Number of items per page (default is 10)
       required: false
       schema:
         type: integer
         default: 10
         format: int32
         example: 10
+
+    Name:
+      name: name
+      in: query
+      description: Part of the name for search
+      required: true
+      schema:
+        type: string
 
   schemas:
     PaginatedUsers:
@@ -259,7 +251,7 @@ components:
         items:
           type: array
           items:
-            $ref: '#/components/schemas/PaginatedUsers'
+            $ref: '#/components/schemas/User'
 
     # --- Enums ---
     UserType:

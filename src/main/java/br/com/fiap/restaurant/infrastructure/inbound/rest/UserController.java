@@ -11,7 +11,6 @@ import br.com.fiap.restaurant.application.ports.inbound.user.get.output.GetUserB
 import br.com.fiap.restaurant.application.ports.inbound.user.list.ForListingUser;
 import br.com.fiap.restaurant.application.ports.inbound.user.list.ForListingUsersByName;
 import br.com.fiap.restaurant.application.ports.inbound.user.list.output.ListUserOutput;
-import br.com.fiap.restaurant.application.ports.inbound.user.list.output.ListUsersByNameOutput;
 import br.com.fiap.restaurant.application.ports.inbound.user.password.ForUpdatingPassword;
 import br.com.fiap.restaurant.application.ports.inbound.user.password.input.UpdatePasswordInput;
 import br.com.fiap.restaurant.application.ports.inbound.user.password.output.UpdatePasswordOutput;
@@ -24,11 +23,9 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -95,27 +92,31 @@ public class UserController implements UsersApi {
 
     @Override
     public ResponseEntity<PaginatedUsersDTO> listUsers(final Integer page, final Integer perPage) {
-        Pagination userOutputList = forListingUser.listUsers(page, perPage);
+        Pagination<ListUserOutput> pagination = forListingUser.listUsers(page, perPage);
 
-        final PaginatedUsersDTO dto = new PaginatedUsersDTO()
-                .page(userOutputList.currentPage())
-                .perPage(userOutputList.pageSize())
-                .totalPages(userOutputList.totalItems())
-                .items(userOutputList
-                        .items()
-                        .stream()
-                        .map((user) -> userMapper.paginatedUsertoDTO((ListUserOutput) user)).toList());
-
-
-        return ResponseEntity.ok(dto);
+        return buildListUsers(pagination);
     }
 
     @Override
-    public ResponseEntity<List<UserDTO>> listUsersByName(@RequestParam String name) {
-        List<ListUsersByNameOutput> userOutputList = forListingUsersByName.findAllByName(name);
-        List<UserDTO> userList = userMapper.toListDTO(userOutputList);
+    public ResponseEntity<PaginatedUsersDTO> listUsersByName(String name, final Integer page, final Integer perPage) {
+        Pagination<ListUserOutput> pagination = forListingUsersByName.findAllByName(page, perPage, name);
 
-        return ResponseEntity.ok().body(userList);
+        return buildListUsers(pagination);
+    }
+
+    private ResponseEntity<PaginatedUsersDTO> buildListUsers(Pagination<ListUserOutput> pagination) {
+        long totalPages = (long) Math.ceil((double) pagination.totalItems() / pagination.pageSize());
+
+        final PaginatedUsersDTO dto = new PaginatedUsersDTO()
+                .page(pagination.currentPage())
+                .perPage(pagination.pageSize())
+                .totalPages(totalPages)
+                .items(pagination.items().stream()
+                        .map(userMapper::toDTO)
+                        .toList()
+                );
+
+        return ResponseEntity.ok(dto);
     }
 
     @Override

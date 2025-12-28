@@ -56,7 +56,7 @@ public class AuthenticateUserUseCase implements
     @Override
     public void validateToken(String token) {
         if (token == null || token.isEmpty()) {
-            throw new TokenInvalidException("Token Invalid");
+            throw new TokenInvalidException("Token null or empty");
         }
 
         if (tokenGeneratorPort.isExpiredToken(token)) {

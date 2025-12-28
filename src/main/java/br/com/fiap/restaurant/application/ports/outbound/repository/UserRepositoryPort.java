@@ -16,7 +16,7 @@ public interface UserRepositoryPort {
 
     Optional<User> findById(UserId anId);
 
-    List<User> findAllByName(String name);
+    Pagination<User> findAllByName(int pageSize, int pageNumber, String name);
 
     Pagination<User> find(int page, int size);
 
