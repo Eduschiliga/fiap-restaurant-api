@@ -46,6 +46,10 @@ paths:
         - Users
       summary: List all users
       operationId: listUsers
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/PerPage'
+
       security:
         - bearerAuth: [ ]
       responses:
@@ -54,9 +58,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/User'
+                $ref: '#/components/schemas/PaginatedUsers'
     post:
       tags:
         - Users
@@ -216,7 +218,49 @@ components:
       scheme: bearer
       bearerFormat: JWT
 
+  parameters:
+    Page:
+      name: page
+      in: query
+      description: Page number (default is 0)
+      required: false
+      schema:
+        type: integer
+        default: 0
+        format: int32
+        example: 0
+    PerPage:
+      name: perPage
+      in: query
+      description: NNumber of items per page (default is 10)
+      required: false
+      schema:
+        type: integer
+        default: 10
+        format: int32
+        example: 10
+
   schemas:
+    PaginatedUsers:
+      type: object
+      properties:
+        page:
+          type: integer
+          example: 0
+          format: int32
+        perPage:
+          type: integer
+          example: 10
+          format: int32
+        totalPages:
+          type: integer
+          example: 5
+          format: int64
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/PaginatedUsers'
+
     # --- Enums ---
     UserType:
       type: string

@@ -4,6 +4,7 @@ import br.com.fiap.restaurant.application.domain.exceptions.*;
 import org.springframework.http.*;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -11,6 +12,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.time.Instant;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
@@ -32,13 +34,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             HttpStatusCode status,
             WebRequest request
     ) {
-        String detail = ex.getBindingResult().getFieldErrors().stream()
-                .map(error -> error.getField() + ": " + error.getDefaultMessage())
-                .collect(Collectors.joining("; "));
+        ProblemDetail problemDetail = ProblemDetail.forStatus(status);
 
-        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(status, detail);
         problemDetail.setTitle("Validation Error");
-        problemDetail.setProperty("timestamp", Instant.now());
+        problemDetail.setDetail("One or more fields are invalid.");
+
+        Map<String, String> fieldErrors = ex.getBindingResult().getFieldErrors().stream()
+                .collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage));
+
+        problemDetail.setProperty("fields", fieldErrors);
 
         return ResponseEntity.status(status).body(problemDetail);
     }
@@ -46,6 +50,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(UserNotFoundException.class)
     protected ProblemDetail handleNotFound(final RuntimeException ex) {
         return buildProblemDetail(ex, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(EmailDuplicateException.class)
+    protected ProblemDetail handleConflict(final RuntimeException ex) {
+        return buildProblemDetail(ex, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
@@ -56,8 +65,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(
             {
                     InvalidUserNameException.class,
-                    UsuarioOuSenhaInvalidoException.class,
-                    TokenInvalidoException.class,
+                    UserOrPasswordInvalidException.class,
+                    TokenInvalidException.class,
                     InvalidPasswordException.class
             }
     )

@@ -1,13 +1,14 @@
 package br.com.fiap.restaurant.application.usecases.user;
 
+import br.com.fiap.restaurant.application.domain.exceptions.UserNotFoundException;
+import br.com.fiap.restaurant.application.domain.pagination.Pagination;
+import br.com.fiap.restaurant.application.domain.user.User;
+import br.com.fiap.restaurant.application.domain.user.UserId;
+import br.com.fiap.restaurant.application.domain.user.UserType;
 import br.com.fiap.restaurant.application.ports.inbound.user.get.output.GetUserByIdOutput;
 import br.com.fiap.restaurant.application.ports.inbound.user.list.output.ListUserOutput;
 import br.com.fiap.restaurant.application.ports.inbound.user.list.output.ListUsersByNameOutput;
 import br.com.fiap.restaurant.application.ports.outbound.repository.UserRepositoryPort;
-import br.com.fiap.restaurant.application.domain.exceptions.UserNotFoundException;
-import br.com.fiap.restaurant.application.domain.user.User;
-import br.com.fiap.restaurant.application.domain.user.UserId;
-import br.com.fiap.restaurant.application.domain.user.UserType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -56,12 +57,14 @@ class FindUserUseCaseTest {
     @Test
     void shouldListUsersSuccessfully() {
         User user = User.with(new UserId("1"), "John", "john@test.com", "john", "pass", null, UserType.CLIENT, true, null, null, null);
-        when(userRepositoryPort.findAll()).thenReturn(List.of(user));
 
-        List<ListUserOutput> result = findUserUseCase.listUsers();
+        when(userRepositoryPort.find(1, 1))
+                .thenReturn(new Pagination<>(1, 1, 1, List.of(user)));
 
-        assertFalse(result.isEmpty());
-        assertEquals(1, result.size());
+        Pagination<ListUserOutput> result = findUserUseCase.listUsers(1, 1);
+
+        assertFalse(result.items().isEmpty());
+        assertEquals(1, result.totalItems());
     }
 
     @Test

@@ -1,17 +1,17 @@
 package br.com.fiap.restaurant.application.usecases.auth;
 
+import br.com.fiap.restaurant.application.domain.exceptions.TokenInvalidException;
+import br.com.fiap.restaurant.application.domain.exceptions.UserNotFoundException;
+import br.com.fiap.restaurant.application.domain.exceptions.UserOrPasswordInvalidException;
+import br.com.fiap.restaurant.application.domain.user.User;
+import br.com.fiap.restaurant.application.domain.user.UserId;
+import br.com.fiap.restaurant.application.domain.user.UserType;
 import br.com.fiap.restaurant.application.ports.inbound.auth.input.AuthenticateUserInput;
 import br.com.fiap.restaurant.application.ports.inbound.auth.output.AuthenticateUserOutput;
 import br.com.fiap.restaurant.application.ports.inbound.auth.output.GetUserByTokenOutput;
 import br.com.fiap.restaurant.application.ports.outbound.password.PasswordEncoderPort;
 import br.com.fiap.restaurant.application.ports.outbound.repository.UserRepositoryPort;
 import br.com.fiap.restaurant.application.ports.outbound.token.TokenGeneratorPort;
-import br.com.fiap.restaurant.application.domain.exceptions.TokenInvalidoException;
-import br.com.fiap.restaurant.application.domain.exceptions.UserNotFoundException;
-import br.com.fiap.restaurant.application.domain.exceptions.UsuarioOuSenhaInvalidoException;
-import br.com.fiap.restaurant.application.domain.user.User;
-import br.com.fiap.restaurant.application.domain.user.UserId;
-import br.com.fiap.restaurant.application.domain.user.UserType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -59,16 +59,16 @@ class AuthenticateUserUseCaseTest {
         when(userRepositoryPort.findByLogin(input.login())).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(input.password(), user.getPassword())).thenReturn(false);
 
-        assertThrows(UsuarioOuSenhaInvalidoException.class, () -> authenticateUserUseCase.login(input));
+        assertThrows(UserOrPasswordInvalidException.class, () -> authenticateUserUseCase.login(input));
     }
 
     @Test
     void shouldGetUserByTokenSuccessfully() {
-        String token = "Bearer valid_token";
+        String token = "valid";
         String login = "john";
         User user = User.with(new UserId("1"), "John", "john@test.com", login, "encoded", null, UserType.CLIENT, true, null, null, null);
 
-        when(tokenGeneratorPort.getSubjectByToken("valid_token")).thenReturn(login);
+        when(tokenGeneratorPort.getSubjectByToken(token)).thenReturn(login);
         when(userRepositoryPort.findByLogin(login)).thenReturn(Optional.of(user));
 
         GetUserByTokenOutput output = authenticateUserUseCase.getUserByToken(token);
@@ -79,10 +79,10 @@ class AuthenticateUserUseCaseTest {
 
     @Test
     void shouldThrowExceptionWhenTokenIsInvalid() {
-        String token = "Bearer invalid";
-        when(tokenGeneratorPort.getSubjectByToken("invalid")).thenReturn(null);
+        String token = "invalid";
+        when(tokenGeneratorPort.getSubjectByToken(token)).thenReturn(null);
 
-        assertThrows(TokenInvalidoException.class, () -> authenticateUserUseCase.getUserByToken(token));
+        assertThrows(TokenInvalidException.class, () -> authenticateUserUseCase.getUserByToken(token));
     }
 
     @Test
@@ -91,31 +91,31 @@ class AuthenticateUserUseCaseTest {
 
         when(userRepositoryPort.findByLogin(input.login())).thenReturn(Optional.empty());
 
-        assertThrows(UsuarioOuSenhaInvalidoException.class, () -> authenticateUserUseCase.login(input));
+        assertThrows(UserOrPasswordInvalidException.class, () -> authenticateUserUseCase.login(input));
     }
 
     @Test
     void shouldThrowExceptionWhenTokenSubjectIsInvalid() {
-        String token = "Bearer invalid_token";
-        when(tokenGeneratorPort.getSubjectByToken("invalid_token")).thenReturn(null);
+        String token = "invalid_token";
+        when(tokenGeneratorPort.getSubjectByToken(token)).thenReturn(null);
 
-        assertThrows(TokenInvalidoException.class, () -> authenticateUserUseCase.getUserByToken(token));
+        assertThrows(TokenInvalidException.class, () -> authenticateUserUseCase.getUserByToken(token));
     }
 
     @Test
     void shouldThrowExceptionWhenTokenSubjectIsEmpty() {
-        String token = "Bearer empty_subject_token";
-        when(tokenGeneratorPort.getSubjectByToken("empty_subject_token")).thenReturn("");
+        String token = "empty_subject_token";
+        when(tokenGeneratorPort.getSubjectByToken(token)).thenReturn("");
 
-        assertThrows(TokenInvalidoException.class, () -> authenticateUserUseCase.getUserByToken(token));
+        assertThrows(TokenInvalidException.class, () -> authenticateUserUseCase.getUserByToken(token));
     }
 
     @Test
     void shouldThrowExceptionWhenUserNotFoundByToken() {
-        String token = "Bearer valid_token";
+        String token = "valid_token";
         String login = "john";
 
-        when(tokenGeneratorPort.getSubjectByToken("valid_token")).thenReturn(login);
+        when(tokenGeneratorPort.getSubjectByToken(token)).thenReturn(login);
         when(userRepositoryPort.findByLogin(login)).thenReturn(Optional.empty());
 
         assertThrows(UserNotFoundException.class, () -> authenticateUserUseCase.getUserByToken(token));

@@ -1,10 +1,12 @@
 package br.com.fiap.restaurant.infrastructure.outbound.persistence;
 
+import br.com.fiap.restaurant.application.domain.pagination.Pagination;
 import br.com.fiap.restaurant.application.domain.user.User;
 import br.com.fiap.restaurant.application.domain.user.UserId;
 import br.com.fiap.restaurant.application.ports.outbound.repository.UserRepositoryPort;
 import br.com.fiap.restaurant.infrastructure.outbound.persistence.entity.UserJPAEntity;
 import br.com.fiap.restaurant.infrastructure.outbound.persistence.repository.UserJPARepository;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +19,11 @@ public class UserRepositoryPortAdapter implements UserRepositoryPort {
 
     public UserRepositoryPortAdapter(UserJPARepository userJPARepository) {
         this.userJPARepository = userJPARepository;
+    }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return userJPARepository.existsByEmail(email);
     }
 
     @Override
@@ -44,8 +51,16 @@ public class UserRepositoryPortAdapter implements UserRepositoryPort {
     }
 
     @Override
-    public List<User> findAll() {
-        return userJPARepository.findAll().stream().map(UserJPAEntity::toUser).toList();
+    public Pagination<User> find(int pageSize, int pageNumber) {
+        final var withPage = Pageable.ofSize(pageSize).withPage(pageNumber);
+        final var page = userJPARepository.findAll(withPage);
+
+        return new Pagination<User>(
+                page.getNumber(),
+                page.getSize(),
+                page.getTotalElements(),
+                page.map(UserJPAEntity::toUser).toList()
+        );
     }
 
     @Override

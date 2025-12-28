@@ -10,9 +10,16 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init-scripts:/docker-entrypoint-initdb.d
     networks:
       - fiap-network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U root -d restaurantdb" ]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
 
   fiap-user-service:
     container_name: fiap-user-service
@@ -26,15 +33,25 @@ services:
       DB_USERNAME: root
       DB_PASSWORD: root
       JWT_SECRET: 05b0f768-fe7b-49aa-b934-44ef29634de3
+      JWT_EXPIRATION: 7200
     ports:
       - "8080:8080"
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -sf http://localhost:8080/actuator/health/readiness" ]
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
     networks:
       - fiap-network
 
 volumes:
-  pgdata:
+  postgres_data:
 
 networks:
   fiap-network:
+    driver: bridge
+    name: fiap-network

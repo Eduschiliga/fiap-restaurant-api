@@ -1,6 +1,7 @@
 package br.com.fiap.restaurant.application.usecases.user;
 
 import br.com.fiap.restaurant.application.domain.exceptions.UserNotFoundException;
+import br.com.fiap.restaurant.application.domain.pagination.Pagination;
 import br.com.fiap.restaurant.application.domain.user.User;
 import br.com.fiap.restaurant.application.domain.user.UserId;
 import br.com.fiap.restaurant.application.ports.inbound.user.get.ForGettingUserById;
@@ -49,12 +50,10 @@ public class FindUserUseCase implements
     }
 
     @Override
-    public List<ListUserOutput> listUsers() {
+    public Pagination<ListUserOutput> listUsers(final Integer page, final Integer perPage) {
         return userRepositoryPort
-                .findAll()
-                .stream()
-                .map(ListUserOutput::from)
-                .collect(Collectors.toList());
+                .find(page, perPage)
+                .mapItems(ListUserOutput::from);
     }
 
 

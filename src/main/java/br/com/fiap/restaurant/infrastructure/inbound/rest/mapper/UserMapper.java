@@ -11,10 +11,7 @@ import br.com.fiap.restaurant.application.ports.inbound.user.update.user.UpdateU
 import br.com.fiap.restaurant.application.ports.inbound.user.update.user.UpdateUserOutput;
 import br.com.fiap.restaurant.application.domain.address.AddressId;
 import br.com.fiap.restaurant.application.domain.user.UserId;
-import br.com.fiap.restaurant.model.CreateUserDTO;
-import br.com.fiap.restaurant.model.UpdatePasswordDTO;
-import br.com.fiap.restaurant.model.UpdateUserDTO;
-import br.com.fiap.restaurant.model.UserDTO;
+import br.com.fiap.restaurant.model.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -30,7 +27,7 @@ public interface UserMapper {
     UserDTO toDTO(UpdatePasswordOutput output);
     UserDTO toDTO(UpdateUserOutput output);
     UserDTO toDTO(GetUserByIdOutput output);
-    List<UserDTO> toDTO(List<ListUserOutput> output);
+    PaginatedUsersDTO paginatedUsertoDTO(ListUserOutput output);
     List<UserDTO> toListDTO(List<ListUsersByNameOutput> output);
 
     CreateUserInput fromDTO(CreateUserDTO dto);

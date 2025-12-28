@@ -1,6 +1,7 @@
 package br.com.fiap.restaurant.application.usecases.user;
 
 import br.com.fiap.restaurant.application.domain.address.Address;
+import br.com.fiap.restaurant.application.domain.exceptions.EmailDuplicateException;
 import br.com.fiap.restaurant.application.domain.user.User;
 import br.com.fiap.restaurant.application.ports.inbound.user.create.ForCreatingUser;
 import br.com.fiap.restaurant.application.ports.inbound.user.create.user.CreateUserInput;
@@ -27,6 +28,32 @@ public class CreateUserUseCase implements ForCreatingUser {
     @Override
     @Transactional
     public CreateUserOutput create(CreateUserInput createUserInput) {
+        validateDuplicateEmail(createUserInput.email());
+
+        Address address = createAddress(createUserInput);
+
+        User newUser = User.newUser(
+                createUserInput.name(),
+                createUserInput.email(),
+                createUserInput.login(),
+                passwordEncoder.encode(createUserInput.password()),
+                address,
+                createUserInput.userType()
+        );
+
+        User createdUser = userRepositoryPort.create(newUser);
+
+        return CreateUserOutput.from(createdUser);
+    }
+
+    @Override
+    public void validateDuplicateEmail(String email) {
+        if (userRepositoryPort.existsByEmail(email)) {
+            throw new EmailDuplicateException("Email already exists");
+        }
+    }
+
+    private Address createAddress(CreateUserInput createUserInput) {
         Address address = null;
 
         if (createUserInput.address() != null) {
@@ -40,19 +67,6 @@ public class CreateUserUseCase implements ForCreatingUser {
             );
         }
 
-        String encodedPassword = passwordEncoder.encode(createUserInput.password());
-
-        User newUser = User.newUser(
-                createUserInput.name(),
-                createUserInput.email(),
-                createUserInput.login(),
-                encodedPassword,
-                address,
-                createUserInput.userType()
-        );
-
-        User createdUser = userRepositoryPort.create(newUser);
-
-        return CreateUserOutput.from(createdUser);
+        return address;
     }
 }

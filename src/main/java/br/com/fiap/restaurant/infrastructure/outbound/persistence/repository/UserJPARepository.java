@@ -14,4 +14,6 @@ public interface UserJPARepository extends JpaRepository<UserJPAEntity, String> 
 
     @Query("FROM UserJPAEntity WHERE LOWER(name) LIKE LOWER(CONCAT('%', :name, '%')) ORDER BY name ASC")
     List<UserJPAEntity> findAllByName(String name);
+
+    boolean existsByEmail(String email);
 }

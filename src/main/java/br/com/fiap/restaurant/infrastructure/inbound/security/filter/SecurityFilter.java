@@ -1,7 +1,8 @@
 package br.com.fiap.restaurant.infrastructure.inbound.security.filter;
 
-import br.com.fiap.restaurant.application.ports.inbound.auth.output.GetUserByTokenOutput;
 import br.com.fiap.restaurant.application.ports.inbound.auth.ForGettingUserByToken;
+import br.com.fiap.restaurant.application.ports.inbound.auth.ForValidateToken;
+import br.com.fiap.restaurant.application.ports.inbound.auth.output.GetUserByTokenOutput;
 import br.com.fiap.restaurant.infrastructure.inbound.security.model.AddressDetails;
 import br.com.fiap.restaurant.infrastructure.inbound.security.model.UserDetailsImpl;
 import jakarta.servlet.FilterChain;
@@ -18,9 +19,11 @@ import java.io.IOException;
 @Component
 public class SecurityFilter extends OncePerRequestFilter {
     private final ForGettingUserByToken forGettingUserByToken;
+    private final ForValidateToken forValidateToken;
 
-    public SecurityFilter(ForGettingUserByToken forGettingUserByToken) {
+    public SecurityFilter(ForGettingUserByToken forGettingUserByToken, ForValidateToken forValidateToken) {
         this.forGettingUserByToken = forGettingUserByToken;
+        this.forValidateToken = forValidateToken;
     }
 
     @Override
@@ -29,9 +32,11 @@ public class SecurityFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain
     ) throws ServletException, IOException {
-        var token = this.recoverToken(request);
+        String token = this.recoverToken(request);
 
         if (token != null && !token.isBlank()) {
+            forValidateToken.validateToken(token);
+
             GetUserByTokenOutput output = forGettingUserByToken.getUserByToken(token);
 
             if (output != null) {

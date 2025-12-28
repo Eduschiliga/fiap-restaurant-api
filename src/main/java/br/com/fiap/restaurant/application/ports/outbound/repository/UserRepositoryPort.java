@@ -1,5 +1,6 @@
 package br.com.fiap.restaurant.application.ports.outbound.repository;
 
+import br.com.fiap.restaurant.application.domain.pagination.Pagination;
 import br.com.fiap.restaurant.application.domain.user.User;
 import br.com.fiap.restaurant.application.domain.user.UserId;
 
@@ -7,6 +8,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserRepositoryPort {
+    boolean existsByEmail(String email);
+
     User create(User aUser);
 
     User update(User aUser);
@@ -15,7 +18,7 @@ public interface UserRepositoryPort {
 
     List<User> findAllByName(String name);
 
-    List<User> findAll();
+    Pagination<User> find(int page, int size);
 
     void deleteById(UserId anId);
 
