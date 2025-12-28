@@ -6,4 +6,6 @@ import br.com.fiap.restaurant.application.ports.inbound.user.create.user.CreateU
 public interface ForCreatingUser {
     CreateUserOutput create(CreateUserInput createUserInput);
     void validateDuplicateEmail(String email);
+
+    void validateDuplicateLogin(String login);
 }

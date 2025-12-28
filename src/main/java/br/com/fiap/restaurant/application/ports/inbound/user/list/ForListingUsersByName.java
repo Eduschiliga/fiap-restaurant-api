@@ -7,5 +7,5 @@ import br.com.fiap.restaurant.application.ports.inbound.user.list.output.ListUse
 import java.util.List;
 
 public interface ForListingUsersByName {
-    Pagination<ListUserOutput> findAllByName(final Integer page, final Integer perPage, String name);
+    Pagination<ListUserOutput> findAllByName(int pageNumber, int pageSize, String name);
 }

@@ -41,7 +41,7 @@ public class JwtTokenAdapter implements TokenGeneratorPort {
     public String getSubjectByToken(String token) {
         Algorithm algorithm = Algorithm.HMAC256(secret);
         return JWT.require(algorithm)
-                .withIssuer("restaurante-api")
+                .withIssuer("restaurant-api")
                 .build()
                 .verify(token)
                 .getSubject();

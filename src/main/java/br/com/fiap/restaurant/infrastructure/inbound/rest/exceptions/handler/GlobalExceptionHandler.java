@@ -18,6 +18,15 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
+    private ProblemDetail buildProblemDetailWithMessage(final RuntimeException ex, final HttpStatus status, String message) {
+        ProblemDetail problemDetail = ProblemDetail.forStatus(status);
+        problemDetail.setTitle(status.getReasonPhrase());
+        problemDetail.setDetail(message);
+        problemDetail.setProperty("timestamp", Instant.now());
+
+        return problemDetail;
+    }
+
     private ProblemDetail buildProblemDetail(final RuntimeException ex, final HttpStatus status) {
         ProblemDetail problemDetail = ProblemDetail.forStatus(status);
         problemDetail.setTitle(status.getReasonPhrase());
@@ -52,7 +61,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return buildProblemDetail(ex, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(EmailDuplicateException.class)
+    @ExceptionHandler(DuplicateFieldException.class)
     protected ProblemDetail handleConflict(final RuntimeException ex) {
         return buildProblemDetail(ex, HttpStatus.CONFLICT);
     }
@@ -81,6 +90,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     protected ProblemDetail handleGeneralException(final RuntimeException ex) {
-        return buildProblemDetail(ex, HttpStatus.INTERNAL_SERVER_ERROR);
+        String message = "An unexpected error occurred! Please try again later or contact support.";
+        return buildProblemDetailWithMessage(ex, HttpStatus.INTERNAL_SERVER_ERROR, message);
     }
 }

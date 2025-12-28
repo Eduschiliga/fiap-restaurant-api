@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserRepositoryPort {
+    boolean existsByLogin(String login);
+
     boolean existsByEmail(String email);
 
     User create(User aUser);

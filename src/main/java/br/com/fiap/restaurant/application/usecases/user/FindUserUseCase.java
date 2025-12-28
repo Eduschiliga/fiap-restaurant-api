@@ -47,18 +47,18 @@ public class FindUserUseCase implements
     }
 
     @Override
-    public Pagination<ListUserOutput> listUsers(final Integer page, final Integer perPage) {
+    public Pagination<ListUserOutput> listUsers(int pageNumber, int pageSize) {
         return userRepositoryPort
-                .find(page, perPage)
+                .find(pageNumber, pageSize)
                 .mapItems(ListUserOutput::from);
     }
 
 
 
     @Override
-    public Pagination<ListUserOutput> findAllByName(final Integer page, final Integer perPage, String name) {
+    public Pagination<ListUserOutput> findAllByName(int pageNumber, int pageSize, String name) {
         return userRepositoryPort
-                .findAllByName(page, perPage, name)
+                .findAllByName(pageNumber, pageSize, name)
                 .mapItems(ListUserOutput::from);
     }
 }

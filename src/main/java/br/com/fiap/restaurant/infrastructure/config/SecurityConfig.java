@@ -1,6 +1,8 @@
 package br.com.fiap.restaurant.infrastructure.config;
 
 import br.com.fiap.restaurant.infrastructure.inbound.security.filter.SecurityFilter;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +18,12 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 
 @Configuration
 @EnableWebSecurity
+@SecurityScheme(
+        name = "bearerAuth", // O nome deve ser EXATAMENTE igual ao usado no openapi.yml
+        type = SecuritySchemeType.HTTP,
+        scheme = "bearer",
+        bearerFormat = "JWT"
+)
 public class SecurityConfig {
     private final SecurityFilter securityFilter;
     private final HandlerExceptionResolver exceptionResolver;

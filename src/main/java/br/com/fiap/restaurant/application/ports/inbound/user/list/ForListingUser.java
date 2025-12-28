@@ -5,6 +5,6 @@ import br.com.fiap.restaurant.application.ports.inbound.user.list.output.ListUse
 
 public interface ForListingUser {
 
-    Pagination<ListUserOutput> listUsers(final Integer page, final Integer perPage);
+    Pagination<ListUserOutput> listUsers(int pageNumber, int pageSize);
 
 }

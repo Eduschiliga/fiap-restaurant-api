@@ -22,6 +22,11 @@ public class UserRepositoryPortAdapter implements UserRepositoryPort {
     }
 
     @Override
+    public boolean existsByLogin(String login) {
+        return userJPARepository.existsByLogin(login);
+    }
+
+    @Override
     public boolean existsByEmail(String email) {
         return userJPARepository.existsByEmail(email);
     }
@@ -46,7 +51,7 @@ public class UserRepositoryPortAdapter implements UserRepositoryPort {
     }
 
     @Override
-    public Pagination<User> findAllByName(int pageSize, int pageNumber, String name) {
+    public Pagination<User> findAllByName(int pageNumber, int pageSize, String name) {
         final var withPage = Pageable.ofSize(pageSize).withPage(pageNumber);
         final var withSpec = UserJpaSpecification.create(name);
 
@@ -61,7 +66,7 @@ public class UserRepositoryPortAdapter implements UserRepositoryPort {
     }
 
     @Override
-    public Pagination<User> find(int pageSize, int pageNumber) {
+    public Pagination<User> find(int pageNumber, int pageSize) {
         final var withPage = Pageable.ofSize(pageSize).withPage(pageNumber);
         final var page = userJPARepository.findAll(withPage);
 

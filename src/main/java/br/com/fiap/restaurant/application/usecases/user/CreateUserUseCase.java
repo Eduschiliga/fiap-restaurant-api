@@ -1,7 +1,7 @@
 package br.com.fiap.restaurant.application.usecases.user;
 
 import br.com.fiap.restaurant.application.domain.address.Address;
-import br.com.fiap.restaurant.application.domain.exceptions.EmailDuplicateException;
+import br.com.fiap.restaurant.application.domain.exceptions.DuplicateFieldException;
 import br.com.fiap.restaurant.application.domain.user.User;
 import br.com.fiap.restaurant.application.ports.inbound.user.create.ForCreatingUser;
 import br.com.fiap.restaurant.application.ports.inbound.user.create.user.CreateUserInput;
@@ -28,7 +28,7 @@ public class CreateUserUseCase implements ForCreatingUser {
     @Override
     @Transactional
     public CreateUserOutput create(CreateUserInput createUserInput) {
-        validateDuplicateEmail(createUserInput.email());
+        validateDuplicate(createUserInput);
 
         Address address = createAddress(createUserInput);
 
@@ -46,10 +46,22 @@ public class CreateUserUseCase implements ForCreatingUser {
         return CreateUserOutput.from(createdUser);
     }
 
+    private void validateDuplicate(CreateUserInput createUserInput) {
+        validateDuplicateEmail(createUserInput.email());
+        validateDuplicateLogin(createUserInput.login());
+    }
+
+    @Override
+    public void validateDuplicateLogin(String login) {
+        if (userRepositoryPort.existsByLogin(login)) {
+            throw new DuplicateFieldException("Login already exists");
+        }
+    }
+
     @Override
     public void validateDuplicateEmail(String email) {
         if (userRepositoryPort.existsByEmail(email)) {
-            throw new EmailDuplicateException("Email already exists");
+            throw new DuplicateFieldException("Email already exists");
         }
     }
 
