@@ -10,11 +10,8 @@ public record AddressDetails(
         String city,
         String state,
         String zipCode,
-
-        Boolean active,
         LocalDateTime createdAt,
-        LocalDateTime updatedAt,
-        LocalDateTime deletedAt
+        LocalDateTime updatedAt
 ) {
 
 }

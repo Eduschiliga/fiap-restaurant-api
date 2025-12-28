@@ -1,4 +1,4 @@
-package br.com.fiap.restaurant.application.domain.address;
+package br.com.fiap.restaurant.application.domain.user.address;
 
 import java.util.UUID;
 

@@ -2,7 +2,7 @@ package br.com.fiap.restaurant.infrastructure.inbound.security.service;
 
 import br.com.fiap.restaurant.application.domain.user.User;
 import br.com.fiap.restaurant.application.ports.outbound.repository.UserRepositoryPort;
-import br.com.fiap.restaurant.application.domain.address.Address;
+import br.com.fiap.restaurant.application.domain.user.address.Address;
 import br.com.fiap.restaurant.infrastructure.inbound.security.model.AddressDetails;
 import br.com.fiap.restaurant.infrastructure.inbound.security.model.UserDetailsImpl;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -31,10 +31,8 @@ public class SecurityUserDetailsService implements UserDetailsService {
                 user.getPassword(),
                 mapAddress(user.getAddress()),
                 user.getUserType(),
-                user.getActive(),
                 user.getCreatedAt(),
-                user.getUpdatedAt(),
-                user.getDeletedAt()
+                user.getUpdatedAt()
         );
     }
 
@@ -50,10 +48,8 @@ public class SecurityUserDetailsService implements UserDetailsService {
                 address.getCity(),
                 address.getState(),
                 address.getZipCode(),
-                address.getActive(),
                 address.getCreatedAt(),
-                address.getUpdatedAt(),
-                address.getDeletedAt()
+                address.getUpdatedAt()
         );
     }
 }

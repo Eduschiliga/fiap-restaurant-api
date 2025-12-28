@@ -36,17 +36,11 @@ public class UserJPAEntity {
     @JoinColumn(name = "address_id")
     private AddressJPAEntity address;
 
-    @Column(name = "active", nullable = false)
-    private Boolean active;
-
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
-
-    @Column(name = "deleted_at")
-    private LocalDateTime deletedAt;
 
     public AddressJPAEntity getAddress() {
         return address;
@@ -62,7 +56,6 @@ public class UserJPAEntity {
 
         setCreatedAt(now);
         setUpdatedAt(now);
-        setActive(true);
     }
 
     public UserJPAEntity() {
@@ -77,10 +70,8 @@ public class UserJPAEntity {
             String password,
             AddressJPAEntity address,
             UserType userType,
-            Boolean active,
             LocalDateTime createdAt,
-            LocalDateTime updatedAt,
-            LocalDateTime deletedAt
+            LocalDateTime updatedAt
     ) {
         this.userId = userId;
         this.name = name;
@@ -88,11 +79,9 @@ public class UserJPAEntity {
         this.login = login;
         this.password = password;
         this.address = address;
-        this.active = active;
         this.userType = userType;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
-        this.deletedAt = deletedAt;
     }
 
     public static UserJPAEntity of(final User user) {
@@ -104,10 +93,8 @@ public class UserJPAEntity {
                 user.getPassword(),
                 AddressJPAEntity.of(user.getAddress()),
                 user.getUserType(),
-                user.getActive(),
                 user.getCreatedAt(),
-                user.getUpdatedAt(),
-                user.getDeletedAt()
+                user.getUpdatedAt()
         );
     }
 
@@ -120,10 +107,8 @@ public class UserJPAEntity {
                 password,
                 address != null ? address.toAddress() : null,
                 userType,
-                active,
                 createdAt,
-                updatedAt,
-                deletedAt
+                updatedAt
         );
     }
 
@@ -161,20 +146,12 @@ public class UserJPAEntity {
         this.password = password;
     }
 
-    public void setActive(Boolean active) {
-        this.active = active;
-    }
-
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
-    }
-
-    public void setDeletedAt(LocalDateTime deletedAt) {
-        this.deletedAt = deletedAt;
     }
 
     public String getUserId() {
@@ -197,20 +174,12 @@ public class UserJPAEntity {
         return password;
     }
 
-    public Boolean getActive() {
-        return active;
-    }
-
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
-    }
-
-    public LocalDateTime getDeletedAt() {
-        return deletedAt;
     }
 
     public UserType getUserType() {

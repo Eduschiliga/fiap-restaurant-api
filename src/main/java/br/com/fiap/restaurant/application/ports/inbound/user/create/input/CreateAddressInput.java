@@ -1,4 +1,4 @@
-package br.com.fiap.restaurant.application.ports.inbound.user.create.address;
+package br.com.fiap.restaurant.application.ports.inbound.user.create.input;
 
 public record CreateAddressInput(
         String street,

@@ -1,4 +1,4 @@
-package br.com.fiap.restaurant.application.ports.inbound.user.get.output;
+package br.com.fiap.restaurant.application.ports.inbound.user.update.output;
 
 import br.com.fiap.restaurant.application.domain.user.address.Address;
 import br.com.fiap.restaurant.application.domain.user.User;
@@ -7,25 +7,27 @@ import br.com.fiap.restaurant.application.domain.user.UserType;
 
 import java.time.LocalDateTime;
 
-public record GetUserByIdOutput(
+public record UpdateUserOutput(
         UserId userId,
         String name,
-        String email,
         String login,
-        GetAddressOutput address,
+        String email,
+        String password,
+        UpdateAddressOutput address,
         UserType userType,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {
-
-    public static GetUserByIdOutput from(User user) {
+    public static UpdateUserOutput from(User user) {
         Address address = user.getAddress();
-        return new GetUserByIdOutput(
+
+        return new UpdateUserOutput(
                 user.getUserId(),
                 user.getName(),
-                user.getEmail(),
                 user.getLogin(),
-                address != null ? new GetAddressOutput(
+                user.getEmail(),
+                user.getPassword(),
+                address != null ? new UpdateAddressOutput(
                         address.getAddressId(),
                         address.getStreet(),
                         address.getNumber(),
@@ -41,4 +43,5 @@ public record GetUserByIdOutput(
                 user.getUpdatedAt()
         );
     }
+
 }

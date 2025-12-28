@@ -320,8 +320,6 @@ components:
           type: string
         zipCode:
           type: string
-        active:
-          type: boolean
       required:
         - addressId
 
@@ -343,15 +341,10 @@ components:
           type: string
         zipCode:
           type: string
-        active:
-          type: boolean
         createdAt:
           type: string
           format: date-time
         updatedAt:
-          type: string
-          format: date-time
-        deletedAt:
           type: string
           format: date-time
 
@@ -381,9 +374,6 @@ components:
           $ref: '#/components/schemas/CreateAddress'
         userType:
           $ref: '#/components/schemas/UserType'
-        active:
-          type: boolean
-          default: true
 
       required:
         - name
@@ -411,8 +401,6 @@ components:
           maxLength: 255
         address:
           $ref: '#/components/schemas/UpdateAddress'
-        active:
-          type: boolean
         userType:
           $ref: '#/components/schemas/UserType'
       required:
@@ -453,14 +441,9 @@ components:
           $ref: '#/components/schemas/Address'
         userType:
           $ref: '#/components/schemas/UserType'
-        active:
-          type: boolean
         createdAt:
           type: string
           format: date-time
         updatedAt:
-          type: string
-          format: date-time
-        deletedAt:
           type: string
           format: date-time

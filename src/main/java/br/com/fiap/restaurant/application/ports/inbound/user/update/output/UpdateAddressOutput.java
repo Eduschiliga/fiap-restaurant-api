@@ -1,7 +1,7 @@
-package br.com.fiap.restaurant.application.ports.inbound.user.update.address;
+package br.com.fiap.restaurant.application.ports.inbound.user.update.output;
 
-import br.com.fiap.restaurant.application.domain.address.Address;
-import br.com.fiap.restaurant.application.domain.address.AddressId;
+import br.com.fiap.restaurant.application.domain.user.address.Address;
+import br.com.fiap.restaurant.application.domain.user.address.AddressId;
 
 import java.time.LocalDateTime;
 
@@ -14,10 +14,8 @@ public record UpdateAddressOutput(
         String state,
         String zipCode,
 
-        Boolean active,
         LocalDateTime createdAt,
-        LocalDateTime updatedAt,
-        LocalDateTime deletedAt
+        LocalDateTime updatedAt
 ) {
     public static UpdateAddressOutput from(Address user) {
         return new UpdateAddressOutput(
@@ -28,10 +26,8 @@ public record UpdateAddressOutput(
                 user.getCity(),
                 user.getState(),
                 user.getZipCode(),
-                user.getActive(),
                 user.getCreatedAt(),
-                user.getUpdatedAt(),
-                user.getDeletedAt()
+                user.getUpdatedAt()
         );
     }
 

@@ -64,23 +64,19 @@ public class SecurityFilter extends OncePerRequestFilter {
                 output.password(),
                 output.address() != null ?
                         new AddressDetails(
-                                output.address().getAddressId().value(),
-                                output.address().getStreet(),
-                                output.address().getNumber(),
-                                output.address().getComplement(),
-                                output.address().getCity(),
-                                output.address().getState(),
-                                output.address().getZipCode(),
-                                output.address().getActive(),
-                                output.address().getCreatedAt(),
-                                output.address().getUpdatedAt(),
-                                output.address().getDeletedAt()
+                                output.address().addressId().value(),
+                                output.address().street(),
+                                output.address().number(),
+                                output.address().complement(),
+                                output.address().city(),
+                                output.address().state(),
+                                output.address().zipCode(),
+                                output.address().createdAt(),
+                                output.address().updatedAt()
                         ) : null,
                 output.userType(),
-                output.active(),
                 output.createdAt(),
-                output.updatedAt(),
-                output.deletedAt()
+                output.updatedAt()
         );
     }
 

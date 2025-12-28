@@ -1,6 +1,6 @@
 package br.com.fiap.restaurant.application.ports.inbound.user.password.output;
 
-import br.com.fiap.restaurant.application.domain.address.Address;
+import br.com.fiap.restaurant.application.domain.user.address.Address;
 import br.com.fiap.restaurant.application.domain.user.User;
 import br.com.fiap.restaurant.application.domain.user.UserId;
 import br.com.fiap.restaurant.application.domain.user.UserType;
@@ -14,11 +14,9 @@ public record UpdatePasswordOutput(
         String email,
         String password,
         Address address,
-        Boolean active,
         UserType userType,
         LocalDateTime createdAt,
-        LocalDateTime updatedAt,
-        LocalDateTime deletedAt
+        LocalDateTime updatedAt
 ) {
     public static UpdatePasswordOutput from(User user) {
         return new UpdatePasswordOutput(
@@ -28,11 +26,9 @@ public record UpdatePasswordOutput(
                 user.getLogin(),
                 user.getPassword(),
                 user.getAddress(),
-                user.getActive(),
                 user.getUserType(),
                 user.getCreatedAt(),
-                user.getUpdatedAt(),
-                user.getDeletedAt()
+                user.getUpdatedAt()
         );
     }
 

@@ -1,11 +1,11 @@
 package br.com.fiap.restaurant.application.usecases.user;
 
-import br.com.fiap.restaurant.application.domain.address.Address;
+import br.com.fiap.restaurant.application.domain.user.address.Address;
 import br.com.fiap.restaurant.application.domain.exceptions.DuplicateFieldException;
 import br.com.fiap.restaurant.application.domain.user.User;
 import br.com.fiap.restaurant.application.ports.inbound.user.create.ForCreatingUser;
-import br.com.fiap.restaurant.application.ports.inbound.user.create.user.CreateUserInput;
-import br.com.fiap.restaurant.application.ports.inbound.user.create.user.CreateUserOutput;
+import br.com.fiap.restaurant.application.ports.inbound.user.create.input.CreateUserInput;
+import br.com.fiap.restaurant.application.ports.inbound.user.create.output.CreateUserOutput;
 import br.com.fiap.restaurant.application.ports.outbound.password.PasswordEncoderPort;
 import br.com.fiap.restaurant.application.ports.outbound.repository.UserRepositoryPort;
 import jakarta.inject.Inject;

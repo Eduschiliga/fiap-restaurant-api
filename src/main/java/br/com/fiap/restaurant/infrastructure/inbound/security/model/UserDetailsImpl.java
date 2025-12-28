@@ -17,10 +17,8 @@ public record UserDetailsImpl(
         String password,
         AddressDetails address,
         UserType userType,
-        Boolean active,
         LocalDateTime createdAt,
-        LocalDateTime updatedAt,
-        LocalDateTime deletedAt
+        LocalDateTime updatedAt
 ) implements UserDetails {
 
     public String getId() {
@@ -59,6 +57,6 @@ public record UserDetailsImpl(
 
     @Override
     public boolean isEnabled() {
-        return this.active();
+        return true;
     }
 }

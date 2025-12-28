@@ -1,14 +1,14 @@
 package br.com.fiap.restaurant.application.usecases.user;
 
-import br.com.fiap.restaurant.application.ports.inbound.user.password.input.UpdatePasswordInput;
-import br.com.fiap.restaurant.application.ports.inbound.user.password.output.UpdatePasswordOutput;
-import br.com.fiap.restaurant.application.ports.outbound.password.PasswordEncoderPort;
-import br.com.fiap.restaurant.application.ports.outbound.repository.UserRepositoryPort;
 import br.com.fiap.restaurant.application.domain.exceptions.InvalidPasswordException;
 import br.com.fiap.restaurant.application.domain.exceptions.UserNotFoundException;
 import br.com.fiap.restaurant.application.domain.user.User;
 import br.com.fiap.restaurant.application.domain.user.UserId;
 import br.com.fiap.restaurant.application.domain.user.UserType;
+import br.com.fiap.restaurant.application.ports.inbound.user.password.input.UpdatePasswordInput;
+import br.com.fiap.restaurant.application.ports.inbound.user.password.output.UpdatePasswordOutput;
+import br.com.fiap.restaurant.application.ports.outbound.password.PasswordEncoderPort;
+import br.com.fiap.restaurant.application.ports.outbound.repository.UserRepositoryPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,7 +17,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -36,7 +37,7 @@ class UpdatePasswordUseCaseTest {
     @Test
     void shouldUpdatePasswordSuccessfully() {
         String userId = UUID.randomUUID().toString();
-        User user = User.with(new UserId(userId), "John", "email", "login", "oldEncoded", null, UserType.CLIENT, true, null, null, null);
+        User user = User.with(new UserId(userId), "John", "email", "login", "oldEncoded", null, UserType.CLIENT, null, null);
         UpdatePasswordInput input = new UpdatePasswordInput(userId, "newPass", "oldPass");
 
         when(findUserUseCase.findUserDomainById(userId)).thenReturn(user);
@@ -54,7 +55,7 @@ class UpdatePasswordUseCaseTest {
     @Test
     void shouldThrowExceptionWhenOldPasswordIsInvalid() {
         String userId = UUID.randomUUID().toString();
-        User user = User.with(new UserId(userId), "John", "email", "login", "oldEncoded", null, UserType.CLIENT, true, null, null, null);
+        User user = User.with(new UserId(userId), "John", "email", "login", "oldEncoded", null, UserType.CLIENT, null, null);
         UpdatePasswordInput input = new UpdatePasswordInput(userId, "newPass", "wrongOldPass");
 
         when(findUserUseCase.findUserDomainById(userId)).thenReturn(user);
@@ -66,7 +67,7 @@ class UpdatePasswordUseCaseTest {
     @Test
     void shouldThrowExceptionWhenNewPasswordIsSameAsOld() {
         String userId = UUID.randomUUID().toString();
-        User user = User.with(new UserId(userId), "John", "email", "login", "oldEncoded", null, UserType.CLIENT, true, null, null, null);
+        User user = User.with(new UserId(userId), "John", "email", "login", "oldEncoded", null, UserType.CLIENT, null, null);
         UpdatePasswordInput input = new UpdatePasswordInput(userId, "oldPass", "oldPass");
 
         when(findUserUseCase.findUserDomainById(userId)).thenReturn(user);
@@ -80,7 +81,7 @@ class UpdatePasswordUseCaseTest {
     @Test
     void shouldThrowExceptionWhenNewPasswordIsNull() {
         String userId = UUID.randomUUID().toString();
-        User user = User.with(new UserId(userId), "John", "email", "login", "oldEncoded", null, UserType.CLIENT, true, null, null, null);
+        User user = User.with(new UserId(userId), "John", "email", "login", "oldEncoded", null, UserType.CLIENT, null, null);
         UpdatePasswordInput input = new UpdatePasswordInput(userId, null, "oldPass");
 
         when(findUserUseCase.findUserDomainById(userId)).thenReturn(user);
@@ -92,7 +93,7 @@ class UpdatePasswordUseCaseTest {
     @Test
     void shouldThrowExceptionWhenNewPasswordIsBlank() {
         String userId = UUID.randomUUID().toString();
-        User user = User.with(new UserId(userId), "John", "email", "login", "oldEncoded", null, UserType.CLIENT, true, null, null, null);
+        User user = User.with(new UserId(userId), "John", "email", "login", "oldEncoded", null, UserType.CLIENT, null, null);
         UpdatePasswordInput input = new UpdatePasswordInput(userId, "   ", "oldPass");
 
         when(findUserUseCase.findUserDomainById(userId)).thenReturn(user);

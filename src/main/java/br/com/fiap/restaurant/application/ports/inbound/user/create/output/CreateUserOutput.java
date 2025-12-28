@@ -1,9 +1,8 @@
-package br.com.fiap.restaurant.application.ports.inbound.user.create.user;
+package br.com.fiap.restaurant.application.ports.inbound.user.create.output;
 
 import br.com.fiap.restaurant.application.domain.user.User;
 import br.com.fiap.restaurant.application.domain.user.UserId;
 import br.com.fiap.restaurant.application.domain.user.UserType;
-import br.com.fiap.restaurant.application.ports.inbound.user.create.address.CreateAddressOutput;
 
 import java.time.LocalDateTime;
 
@@ -15,10 +14,8 @@ public record CreateUserOutput(
         String password,
         CreateAddressOutput address,
         UserType userType,
-        Boolean active,
         LocalDateTime createdAt,
-        LocalDateTime updatedAt,
-        LocalDateTime deletedAt
+        LocalDateTime updatedAt
 ) {
     public static CreateUserOutput from(User user) {
         return new CreateUserOutput(
@@ -29,10 +26,8 @@ public record CreateUserOutput(
                 user.getPassword(),
                 user.getAddress() != null ?CreateAddressOutput.from(user.getAddress()) : null,
                 user.getUserType(),
-                user.getActive(),
                 user.getCreatedAt(),
-                user.getUpdatedAt(),
-                user.getDeletedAt()
+                user.getUpdatedAt()
         );
     }
 }

@@ -1,10 +1,10 @@
 package br.com.fiap.restaurant.application.usecases.user;
 
-import br.com.fiap.restaurant.application.domain.address.Address;
+import br.com.fiap.restaurant.application.domain.user.address.Address;
 import br.com.fiap.restaurant.application.domain.user.User;
 import br.com.fiap.restaurant.application.ports.inbound.user.update.UpdateUserInputPort;
-import br.com.fiap.restaurant.application.ports.inbound.user.update.user.UpdateUserInput;
-import br.com.fiap.restaurant.application.ports.inbound.user.update.user.UpdateUserOutput;
+import br.com.fiap.restaurant.application.ports.inbound.user.update.input.UpdateUserInput;
+import br.com.fiap.restaurant.application.ports.inbound.user.update.output.UpdateUserOutput;
 import br.com.fiap.restaurant.application.ports.outbound.repository.UserRepositoryPort;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -39,8 +39,6 @@ public class UpdateUserUseCase implements UpdateUserInputPort {
                     input.address().city(),
                     input.address().state(),
                     input.address().zipCode(),
-                    input.address().active(),
-                    null,
                     null,
                     null
             );
@@ -51,8 +49,7 @@ public class UpdateUserUseCase implements UpdateUserInputPort {
                     input.address().complement(),
                     input.address().city(),
                     input.address().state(),
-                    input.address().zipCode(),
-                    input.address().active()
+                    input.address().zipCode()
             );
         }
 
@@ -60,8 +57,7 @@ public class UpdateUserUseCase implements UpdateUserInputPort {
                 input.name(),
                 input.email(),
                 input.login(),
-                address,
-                input.active()
+                address
         );
 
         user = userRepositoryPort.update(user);

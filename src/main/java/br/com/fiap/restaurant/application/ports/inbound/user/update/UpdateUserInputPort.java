@@ -1,7 +1,7 @@
 package br.com.fiap.restaurant.application.ports.inbound.user.update;
 
-import br.com.fiap.restaurant.application.ports.inbound.user.update.user.UpdateUserInput;
-import br.com.fiap.restaurant.application.ports.inbound.user.update.user.UpdateUserOutput;
+import br.com.fiap.restaurant.application.ports.inbound.user.update.input.UpdateUserInput;
+import br.com.fiap.restaurant.application.ports.inbound.user.update.output.UpdateUserOutput;
 
 public interface UpdateUserInputPort {
 

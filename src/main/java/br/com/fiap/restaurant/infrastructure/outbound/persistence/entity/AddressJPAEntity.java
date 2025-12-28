@@ -1,7 +1,7 @@
 package br.com.fiap.restaurant.infrastructure.outbound.persistence.entity;
 
-import br.com.fiap.restaurant.application.domain.address.Address;
-import br.com.fiap.restaurant.application.domain.address.AddressId;
+import br.com.fiap.restaurant.application.domain.user.address.Address;
+import br.com.fiap.restaurant.application.domain.user.address.AddressId;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -32,17 +32,11 @@ public class AddressJPAEntity {
     @Column(name = "zip_code")
     private String zipCode;
 
-    @Column(name = "active")
-    private Boolean active;
-
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
-    @Column(name = "deleted_at")
-    private LocalDateTime deletedAt;
 
     @PrePersist
     public void prePersist() {
@@ -50,7 +44,6 @@ public class AddressJPAEntity {
 
         setCreatedAt(now);
         setUpdatedAt(now);
-        setActive(true);
     }
 
     public AddressJPAEntity() {
@@ -65,10 +58,8 @@ public class AddressJPAEntity {
             String city,
             String state,
             String zipCode,
-            Boolean active,
             LocalDateTime createdAt,
-            LocalDateTime updatedAt,
-            LocalDateTime deletedAt
+            LocalDateTime updatedAt
     ) {
         this.addressId = addressId;
         this.street = street;
@@ -77,10 +68,8 @@ public class AddressJPAEntity {
         this.city = city;
         this.state = state;
         this.zipCode = zipCode;
-        this.active = active;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
-        this.deletedAt = deletedAt;
     }
 
     public static AddressJPAEntity of(final Address address) {
@@ -94,10 +83,8 @@ public class AddressJPAEntity {
                 address.getCity(),
                 address.getState(),
                 address.getZipCode(),
-                address.getActive(),
                 address.getCreatedAt(),
-                address.getUpdatedAt(),
-                address.getDeletedAt()
+                address.getUpdatedAt()
         );
     }
 
@@ -110,10 +97,8 @@ public class AddressJPAEntity {
                 city,
                 state,
                 zipCode,
-                active,
                 createdAt,
-                updatedAt,
-                deletedAt
+                updatedAt
         );
     }
 
@@ -173,14 +158,6 @@ public class AddressJPAEntity {
         this.zipCode = zipCode;
     }
 
-    public Boolean getActive() {
-        return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
-    }
-
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -195,13 +172,5 @@ public class AddressJPAEntity {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
-    }
-
-    public LocalDateTime getDeletedAt() {
-        return deletedAt;
-    }
-
-    public void setDeletedAt(LocalDateTime deletedAt) {
-        this.deletedAt = deletedAt;
     }
 }

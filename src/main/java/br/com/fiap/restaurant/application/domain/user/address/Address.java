@@ -1,4 +1,4 @@
-package br.com.fiap.restaurant.application.domain.address;
+package br.com.fiap.restaurant.application.domain.user.address;
 
 import java.time.LocalDateTime;
 
@@ -10,11 +10,8 @@ public class Address {
     private String city;
     private String state;
     private String zipCode;
-
-    private Boolean active;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private LocalDateTime deletedAt;
 
     public Address(
             AddressId addressId,
@@ -24,10 +21,8 @@ public class Address {
             String city,
             String state,
             String zipCode,
-            Boolean active,
             LocalDateTime createdAt,
-            LocalDateTime updatedAt,
-            LocalDateTime deletedAt
+            LocalDateTime updatedAt
     ) {
         this.addressId = addressId;
         this.street = street;
@@ -36,10 +31,8 @@ public class Address {
         this.city = city;
         this.state = state;
         this.zipCode = zipCode;
-        this.active = active;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
-        this.deletedAt = deletedAt;
     }
 
     public static Address with(
@@ -50,10 +43,8 @@ public class Address {
             String city,
             String state,
             String zipCode,
-            Boolean active,
             LocalDateTime createdAt,
-            LocalDateTime updatedAt,
-            LocalDateTime deletedAt
+            LocalDateTime updatedAt
     ) {
         return new Address(
                 addressId,
@@ -63,10 +54,8 @@ public class Address {
                 city,
                 state,
                 zipCode,
-                active,
                 createdAt,
-                updatedAt,
-                deletedAt
+                updatedAt
         );
     }
 
@@ -88,10 +77,8 @@ public class Address {
                 city,
                 state,
                 zipCode,
-                true,
                 now,
-                now,
-                null
+                now
         );
     }
 
@@ -101,15 +88,8 @@ public class Address {
             String complement,
             String city,
             String state,
-            String zipCode,
-            Boolean active
+            String zipCode
     ) {
-        if (Boolean.TRUE.equals(active)) {
-            activate();
-        } else {
-            deactivate();
-        }
-
         this.street = street;
         this.number = number;
         this.complement = complement;
@@ -119,19 +99,6 @@ public class Address {
         this.updatedAt = LocalDateTime.now();
 
         return this;
-    }
-
-    public void activate() {
-        this.active = true;
-        this.deletedAt = null;
-    }
-
-    public void deactivate() {
-        if (this.deletedAt == null) {
-            this.deletedAt = LocalDateTime.now();
-        }
-
-        this.active = false;
     }
 
     public AddressId getAddressId() {
@@ -162,19 +129,11 @@ public class Address {
         return zipCode;
     }
 
-    public Boolean getActive() {
-        return active;
-    }
-
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
-    }
-
-    public LocalDateTime getDeletedAt() {
-        return deletedAt;
     }
 }

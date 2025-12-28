@@ -35,7 +35,7 @@ class FindUserUseCaseTest {
     @Test
     void shouldFindUserByIdSuccessfully() {
         String idStr = UUID.randomUUID().toString();
-        User user = User.with(new UserId(idStr), "John", "john@test.com", "john", "pass", null, UserType.CLIENT, true, null, null, null);
+        User user = User.with(new UserId(idStr), "John", "john@test.com", "john", "pass", null, UserType.CLIENT, null, null);
 
         when(userRepositoryPort.findById(any(UserId.class))).thenReturn(Optional.of(user));
 
@@ -55,7 +55,7 @@ class FindUserUseCaseTest {
 
     @Test
     void shouldListUsersSuccessfully() {
-        User user = User.with(new UserId("1"), "John", "john@test.com", "john", "pass", null, UserType.CLIENT, true, null, null, null);
+        User user = User.with(new UserId("1"), "John", "john@test.com", "john", "pass", null, UserType.CLIENT, null, null);
 
         when(userRepositoryPort.find(1, 1))
                 .thenReturn(new Pagination<>(1, 1, 1, List.of(user)));
@@ -87,7 +87,7 @@ class FindUserUseCaseTest {
         String name = "John";
         int page = 0;
         int perPage = 10;
-        User user = User.with(new UserId("1"), "John Doe", "john@test.com", "john", "pass", null, UserType.CLIENT, true, null, null, null);
+        User user = User.with(new UserId("1"), "John Doe", "john@test.com", "john", "pass", null, UserType.CLIENT, null, null);
 
         when(userRepositoryPort.findAllByName(page, perPage, name))
                 .thenReturn(new Pagination<>(page, perPage, 1, List.of(user)));

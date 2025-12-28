@@ -31,7 +31,7 @@ class DeleteUserUseCaseTest {
     @Test
     void shouldDeleteUserSuccessfully() {
         String idStr = UUID.randomUUID().toString();
-        User user = User.with(new UserId(idStr), "John", "john@test.com", "john", "pass", null, UserType.CLIENT, true, null, null, null);
+        User user = User.with(new UserId(idStr), "John", "john@test.com", "john", "pass", null, UserType.CLIENT, null, null);
 
         when(findUserUseCase.findUserDomainById(idStr)).thenReturn(user);
 

@@ -39,7 +39,7 @@ class AuthenticateUserUseCaseTest {
     @Test
     void shouldLoginSuccessfully() {
         AuthenticateUserInput input = new AuthenticateUserInput("john", "123456");
-        User user = User.with(new UserId("1"), "John", "john@test.com", "john", "encoded", null, UserType.CLIENT, true, null, null, null);
+        User user = User.with(new UserId("1"), "John", "john@test.com", "john", "encoded", null, UserType.CLIENT, null, null);
 
         when(userRepositoryPort.findByLogin(input.login())).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(input.password(), user.getPassword())).thenReturn(true);
@@ -54,7 +54,7 @@ class AuthenticateUserUseCaseTest {
     @Test
     void shouldThrowExceptionWhenPasswordInvalid() {
         AuthenticateUserInput input = new AuthenticateUserInput("john", "wrongpass");
-        User user = User.with(new UserId("1"), "John", "john@test.com", "john", "encoded", null, UserType.CLIENT, true, null, null, null);
+        User user = User.with(new UserId("1"), "John", "john@test.com", "john", "encoded", null, UserType.CLIENT, null, null);
 
         when(userRepositoryPort.findByLogin(input.login())).thenReturn(Optional.of(user));
         when(passwordEncoder.matches(input.password(), user.getPassword())).thenReturn(false);
@@ -66,7 +66,7 @@ class AuthenticateUserUseCaseTest {
     void shouldGetUserByTokenSuccessfully() {
         String token = "valid";
         String login = "john";
-        User user = User.with(new UserId("1"), "John", "john@test.com", login, "encoded", null, UserType.CLIENT, true, null, null, null);
+        User user = User.with(new UserId("1"), "John", "john@test.com", login, "encoded", null, UserType.CLIENT, null, null);
 
         when(tokenGeneratorPort.getSubjectByToken(token)).thenReturn(login);
         when(userRepositoryPort.findByLogin(login)).thenReturn(Optional.of(user));

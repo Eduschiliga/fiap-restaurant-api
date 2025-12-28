@@ -1,6 +1,6 @@
 package br.com.fiap.restaurant.application.domain.user;
 
-import br.com.fiap.restaurant.application.domain.address.Address;
+import br.com.fiap.restaurant.application.domain.user.address.Address;
 
 import java.time.LocalDateTime;
 
@@ -12,10 +12,8 @@ public class User {
     private String password;
     private Address address;
     private UserType userType;
-    private Boolean active;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private LocalDateTime deletedAt;
 
     public User(
             UserId userId,
@@ -25,10 +23,8 @@ public class User {
             String password,
             Address address,
             UserType userType,
-            Boolean active,
             LocalDateTime createdAt,
-            LocalDateTime updatedAt,
-            LocalDateTime deletedAt
+            LocalDateTime updatedAt
     ) {
         this.userId = userId;
         this.name = name;
@@ -37,10 +33,8 @@ public class User {
         this.password = password;
         this.address = address;
         this.userType = userType;
-        this.active = active;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
-        this.deletedAt = deletedAt;
     }
 
     public static User with(
@@ -51,10 +45,8 @@ public class User {
             String password,
             Address address,
             UserType userType,
-            Boolean active,
             LocalDateTime createdAt,
-            LocalDateTime updatedAt,
-            LocalDateTime deletedAt
+            LocalDateTime updatedAt
     ) {
         return new User(
                 userId,
@@ -64,10 +56,8 @@ public class User {
                 password,
                 address,
                 userType,
-                active,
                 createdAt,
-                updatedAt,
-                deletedAt
+                updatedAt
         );
     }
 
@@ -89,10 +79,8 @@ public class User {
                 password,
                 address,
                 userType,
-                true,
                 now,
-                now,
-                null
+                now
         );
     }
 
@@ -100,15 +88,8 @@ public class User {
             String name,
             String email,
             String login,
-            Address address,
-            Boolean active
+            Address address
     ) {
-        if (Boolean.TRUE.equals(active)) {
-            activate();
-        } else {
-            deactivate();
-        }
-
         this.name = name;
         this.email = email;
         this.login = login;
@@ -122,18 +103,6 @@ public class User {
         this.password = password;
         this.updatedAt = LocalDateTime.now();
         return this;
-    }
-
-    public void activate() {
-        this.active = true;
-        this.deletedAt = null;
-    }
-
-    public void deactivate() {
-        if (this.deletedAt == null) {
-            this.deletedAt = LocalDateTime.now();
-        }
-        this.active = false;
     }
 
     public UserId getUserId() {
@@ -160,20 +129,12 @@ public class User {
         return address;
     }
 
-    public Boolean getActive() {
-        return active;
-    }
-
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
-    }
-
-    public LocalDateTime getDeletedAt() {
-        return deletedAt;
     }
 
     public UserType getUserType() {

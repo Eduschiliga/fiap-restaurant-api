@@ -1,15 +1,15 @@
 package br.com.fiap.restaurant.infrastructure.inbound.rest.mapper;
 
-import br.com.fiap.restaurant.application.ports.inbound.user.create.user.CreateUserInput;
-import br.com.fiap.restaurant.application.ports.inbound.user.create.user.CreateUserOutput;
+import br.com.fiap.restaurant.application.ports.inbound.user.create.input.CreateUserInput;
+import br.com.fiap.restaurant.application.ports.inbound.user.create.output.CreateUserOutput;
 import br.com.fiap.restaurant.application.ports.inbound.user.get.output.GetUserByIdOutput;
 import br.com.fiap.restaurant.application.ports.inbound.user.list.output.ListUserOutput;
 import br.com.fiap.restaurant.application.ports.inbound.user.list.output.ListUsersByNameOutput;
 import br.com.fiap.restaurant.application.ports.inbound.user.password.input.UpdatePasswordInput;
 import br.com.fiap.restaurant.application.ports.inbound.user.password.output.UpdatePasswordOutput;
-import br.com.fiap.restaurant.application.ports.inbound.user.update.user.UpdateUserInput;
-import br.com.fiap.restaurant.application.ports.inbound.user.update.user.UpdateUserOutput;
-import br.com.fiap.restaurant.application.domain.address.AddressId;
+import br.com.fiap.restaurant.application.ports.inbound.user.update.input.UpdateUserInput;
+import br.com.fiap.restaurant.application.ports.inbound.user.update.output.UpdateUserOutput;
+import br.com.fiap.restaurant.application.domain.user.address.AddressId;
 import br.com.fiap.restaurant.application.domain.user.UserId;
 import br.com.fiap.restaurant.model.*;
 import org.mapstruct.Mapper;
