@@ -5,4 +5,5 @@ import br.com.fiap.restaurant.application.ports.inbound.user.password.output.Upd
 
 public interface ForUpdatingPassword {
     UpdatePasswordOutput updatePassword(UpdatePasswordInput input);
+    void validateNewPassword(UpdatePasswordInput input, String actualPassword);
 }

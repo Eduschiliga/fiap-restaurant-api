@@ -36,8 +36,16 @@ public class UpdatePasswordUseCase implements
     @Transactional
     public UpdatePasswordOutput updatePassword(UpdatePasswordInput input) {
         User user = findUserUseCase.findUserDomainById(input.userId());
+        validateNewPassword(input, user.getPassword());
 
-        String actualPassword = user.getPassword();
+        user.updatePassword(passwordEncoder.encode(input.newPassword()));
+        user = userRepositoryPort.update(user);
+
+        return UpdatePasswordOutput.from(user);
+    }
+
+    @Override
+    public void validateNewPassword(UpdatePasswordInput input, String actualPassword) {
         boolean matchPassword = passwordEncoder.matches(input.oldPassword(), actualPassword);
 
         if (!matchPassword) {
@@ -51,11 +59,5 @@ public class UpdatePasswordUseCase implements
         if (passwordEncoder.matches(input.newPassword(), actualPassword)) {
             throw new InvalidPasswordException("New password cannot be the same as old password.");
         }
-
-        user.updatePassword(passwordEncoder.encode(input.newPassword()));
-
-        user = userRepositoryPort.update(user);
-
-        return UpdatePasswordOutput.from(user);
     }
 }
