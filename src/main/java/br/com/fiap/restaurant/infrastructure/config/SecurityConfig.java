@@ -19,12 +19,14 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 @Configuration
 @EnableWebSecurity
 @SecurityScheme(
-        name = "bearerAuth", // O nome deve ser EXATAMENTE igual ao usado no openapi.yml
+        name = SecurityConfig.SECURITY_SCHEME_NAME,
         type = SecuritySchemeType.HTTP,
         scheme = "bearer",
         bearerFormat = "JWT"
 )
 public class SecurityConfig {
+    public static final String SECURITY_SCHEME_NAME = "bearerAuth";
+
     private final SecurityFilter securityFilter;
     private final HandlerExceptionResolver exceptionResolver;
 

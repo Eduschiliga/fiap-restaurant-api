@@ -84,18 +84,17 @@ public class User {
         );
     }
 
-    public User update(
-            String name,
-            String email,
-            String login,
-            Address address
-    ) {
+    public User update(String name, String email, String login, String street, String number, String complement, String city, String state, String zipCode) {
         this.name = name;
         this.email = email;
         this.login = login;
-        this.address = address;
         this.updatedAt = LocalDateTime.now();
 
+        if (this.address == null) {
+            this.address = Address.with(null, street, number, complement, city, state, zipCode, null, null);
+        } else {
+            this.address.update(street, number, complement, city, state, zipCode);
+        }
         return this;
     }
 
