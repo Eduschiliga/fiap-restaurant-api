@@ -47,7 +47,7 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests((authorize) -> {
                     authorize.requestMatchers(
-                            "/api/auth/**",
+                            "/api/v1/auth/**",
                             "/swagger-ui/**",
                             "/v3/api-docs/**",
                             "/swagger-resources/**",
@@ -55,7 +55,7 @@ public class SecurityConfig {
                             "/actuator/health/readiness"
                     ).permitAll()
                     .requestMatchers(HttpMethod.POST, "/swagger-ui").permitAll()
-                    .requestMatchers(HttpMethod.POST, "/api/users/**").permitAll().anyRequest().authenticated();
+                    .requestMatchers(HttpMethod.POST, "/api/v1/users/**").permitAll().anyRequest().authenticated();
                 }
                 )
                 .exceptionHandling(exception -> exception
@@ -66,7 +66,7 @@ public class SecurityConfig {
                         exceptionResolver.resolveException(request, response, null, accessDeniedException)
                     )
                 )
-                .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)) // Necessário para H2 Console
+                .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
             .build();
     }
