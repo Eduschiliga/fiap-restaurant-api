@@ -1,0 +1,559 @@
+{
+	"info": {
+		"_postman_id": "0bd433a1-c015-4070-909a-d31b7e3c0474",
+		"name": "Api Users - FIAP",
+		"description": "# 🚀 Automação de Testes - FIAP Restaurant API\n\nEsta collection contém o fluxo completo de testes E2E (End-to-End) para o microsserviço de usuários. Ela foi configurada com **scripts de pré-requisição e testes** para ser totalmente autônoma, dispensando a cópia manual de Tokens ou IDs.\n\nStartFragment\n\n## 📝 Passo a Passo para Executar (Collection Runner)\n\nPara testar o fluxo completo de vida do usuário (Criação -> Uso -> Exclusão), siga estes passos:\n\n1. **Abra o Runner:**\n    \n    - Selecione a raiz da collection e clique com o botão direito do mose e selecione **\"Run\"** (no topo da interface).\n        \n    - Defina o delay das requisições\n        \n2. **Verifique a Ordem de Execução:**\n    \n    - ⚠️ **Importante:** Certifique-se de que as requisições estão na seguinte ordem lógica para que as variáveis sejam passadas corretamente:\n        \n        1. `Create` (Gera o usuário e as variáveis iniciais)\n            \n        2. `ERROR Duplicate E-mail`\n            \n        3. `Auth` (Gera o Token JWT)\n            \n        4. `Update`\n            \n        5. `ERROR Max Length - Update`\n            \n        6. `ERROR Max Length - Update`\n            \n        7. `FindAll`\n            \n        8. `Find By ID`\n            \n        9. `Search Users`\n            \n        10. `ERROR Required Field - Update Password`\n            \n        11. `Update Password`\n            \n        12. `Delete By ID`\n            \n        13. `ERROR - Unauthorized`\n            \n3. **Configuração de Variáveis:**\n    \n    - Certifique-se de que a variável `URL_BASE` (ex: `http://localhost:8080/api/v1`) esteja configurada no seu Environment ou nas variáveis da Collection.\n        \n    - _Nota: Não é necessário preencher_ `token` _ou_ `userId` _manualmente, o script fará isso._\n        \n4. Clique no botão **\"Run Api Users - FIAP\".**",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "39632985"
+	},
+	"item": [
+		{
+			"name": "Create",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (pm.response.code === 201) {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.collectionVariables.set(\"userId\", jsonData.userId);\r",
+							"    pm.collectionVariables.set(\"login\", jsonData.login);\r",
+							"    pm.collectionVariables.set(\"email\", jsonData.email);\r",
+							"    pm.collectionVariables.set(\"password\", \"Password123!\");\r",
+							"    pm.collectionVariables.set(\"addressId\", jsonData.address.addressId);\r",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Name {{$randomFullName}}\",\r\n    \"email\": \"{{$randomEmail}}\",\r\n    \"login\": \"user.{{$randomInt}}\",\r\n    \"password\": \"Password123!\",\r\n    \"address\": {\r\n        \"street\": \"{{$randomStreetName}}\",\r\n        \"number\": \"{{$randomInt}}\",\r\n        \"complement\": \"Apto {{$randomInt}}\",\r\n        \"city\": \"{{$randomCity}}\",\r\n        \"state\": \"PR\",\r\n        \"zipCode\": \"80230-000\"\r\n    },\r\n    \"userType\": \"CLIENT\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL_BASE}}/users",
+					"host": [
+						"{{URL_BASE}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ERROR  Duplicate E-mail - Create",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (pm.response.code === 201) {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.collectionVariables.set(\"userId\", jsonData.userId);\r",
+							"    pm.collectionVariables.set(\"login\", jsonData.login);\r",
+							"    pm.collectionVariables.set(\"password\", \"Password123!\");\r",
+							"    pm.collectionVariables.set(\"addressId\", jsonData.address.addressId);\r",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Name {{$randomFullName}}\",\r\n    \"email\": \"{{email}}\",\r\n    \"login\": \"user.{{$randomInt}}\",\r\n    \"password\": \"Password123!\",\r\n    \"address\": {\r\n        \"street\": \"{{$randomStreetName}}\",\r\n        \"number\": \"{{$randomInt}}\",\r\n        \"complement\": \"Apto {{$randomInt}}\",\r\n        \"city\": \"{{$randomCity}}\",\r\n        \"state\": \"PR\",\r\n        \"zipCode\": \"80230-000\"\r\n    },\r\n    \"userType\": \"CLIENT\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL_BASE}}/users",
+					"host": [
+						"{{URL_BASE}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Auth",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (pm.response.code === 200) {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.collectionVariables.set(\"token\", jsonData.token);\r",
+							"    console.log(\"Token atualizado com sucesso!\");\r",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"login\": \"{{login}}\",\r\n  \"password\": \"{{password}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL_BASE}}/auth/login",
+					"host": [
+						"{{URL_BASE}}"
+					],
+					"path": [
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (pm.response.code === 201) {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.collectionVariables.set(\"userId\", jsonData.userId);\r",
+							"    pm.collectionVariables.set(\"login\", jsonData.login);\r",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"{{$randomFullName}}{{$randomFullName}}{{$randomFullName}}{{$randomFullName}}{{$randomFullName}}\",\r\n    \"email\": \"{{$randomEmail}}\",\r\n    \"login\": \"{{login}}\",\r\n    \"address\": {\r\n        \"addressId\": \"{{addressId}}\",\r\n        \"street\": \"{{$randomStreetName}}\",\r\n        \"number\": \"{{$randomInt}}\",\r\n        \"complement\": \"Apto {{$randomInt}}\",\r\n        \"city\": \"{{$randomCity}}\",\r\n        \"state\": \"PR\",\r\n        \"zipCode\": \"80230-000\"\r\n    },\r\n    \"userType\": \"CLIENT\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL_BASE}}/users/{{userId}}",
+					"host": [
+						"{{URL_BASE}}"
+					],
+					"path": [
+						"users",
+						"{{userId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ERROR Max Length - Update",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (pm.response.code === 201) {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.collectionVariables.set(\"userId\", jsonData.userId);\r",
+							"    pm.collectionVariables.set(\"login\", jsonData.login);\r",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var longString = new Array(261).join('ABC'); \r",
+							"pm.environment.set(\"longName\", longString);"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"{{longName}}\",\r\n    \"email\": \"{{$randomEmail}}\",\r\n    \"login\": \"{{login}}\",\r\n    \"address\": {\r\n        \"addressId\": \"{{addressId}}\",\r\n        \"street\": \"{{$randomStreetName}}\",\r\n        \"number\": \"{{$randomInt}}\",\r\n        \"complement\": \"Apto {{$randomInt}}\",\r\n        \"city\": \"{{$randomCity}}\",\r\n        \"state\": \"PR\",\r\n        \"zipCode\": \"80230-000\"\r\n    },\r\n    \"userType\": \"CLIENT\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL_BASE}}/users/{{userId}}",
+					"host": [
+						"{{URL_BASE}}"
+					],
+					"path": [
+						"users",
+						"{{userId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "FindAll",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{URL_BASE}}/users?page=0&perPage=10",
+					"host": [
+						"{{URL_BASE}}"
+					],
+					"path": [
+						"users"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "0"
+						},
+						{
+							"key": "perPage",
+							"value": "10"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Find By Id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{URL_BASE}}/users/{{userId}}",
+					"host": [
+						"{{URL_BASE}}"
+					],
+					"path": [
+						"users",
+						"{{userId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Search Users",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{URL_BASE}}/users/search?name=Name&page=0&perPage=100",
+					"host": [
+						"{{URL_BASE}}"
+					],
+					"path": [
+						"users",
+						"search"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "Name"
+						},
+						{
+							"key": "page",
+							"value": "0"
+						},
+						{
+							"key": "perPage",
+							"value": "100"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ERROR Required field - Update Password",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"newPassword\": null,\r\n  \"oldPassword\": \"{{password}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL_BASE}}/users/{{userId}}/password",
+					"host": [
+						"{{URL_BASE}}"
+					],
+					"path": [
+						"users",
+						"{{userId}}",
+						"password"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Password",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (pm.response.code === 200) {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.collectionVariables.set(\"password\", \"eduardo.dev\");\r",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var randomInt = Math.floor(Math.random() * 10000);\r",
+							"var novaSenha = \"Pass\" + randomInt + \"!\";\r",
+							"\r",
+							"pm.collectionVariables.set(\"new_password\", novaSenha);"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"newPassword\": \"{{new_password}}\",\r\n  \"oldPassword\": \"{{password}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL_BASE}}/users/{{userId}}/password",
+					"host": [
+						"{{URL_BASE}}"
+					],
+					"path": [
+						"users",
+						"{{userId}}",
+						"password"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete By Id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Verifica se a deleção ocorreu com sucesso (Status 204 No Content)\r",
+							"pm.test(\"Status code is 204\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});\r",
+							"\r",
+							"// Limpa as variáveis específicas geradas durante o fluxo\r",
+							"pm.collectionVariables.unset(\"userId\");\r",
+							"pm.collectionVariables.unset(\"token\");\r",
+							"\r",
+							"console.log(\"Variáveis de execução (userId, token) foram limpas.\");"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{URL_BASE}}/users/{{userId}}",
+					"host": [
+						"{{URL_BASE}}"
+					],
+					"path": [
+						"users",
+						"{{userId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ERROR - Unauthorized",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"Eduardo Dev\",\r\n  \"email\": \"dev.edu@gmail.com\",\r\n  \"login\": \"dev.edu\",\r\n  \"address\": {\r\n    \"addressId\": \"b0091526-92b4-458a-9529-97b0b45ab8fc\",\r\n    \"street\": \"Avenida Silva Jardim\",\r\n    \"number\": \"1450\",\r\n    \"complement\": \"Bloco B - Apto 402\",\r\n    \"city\": \"Ponta Grpssa\",\r\n    \"state\": \"PR\",\r\n    \"zipCode\": \"80230-000\"\r\n  },\r\n  \"userType\": \"CLIENT\",\r\n  \"active\": true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{URL_BASE}}/users/{{userId}}",
+					"host": [
+						"{{URL_BASE}}"
+					],
+					"path": [
+						"users",
+						"{{userId}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "login",
+			"value": ""
+		},
+		{
+			"key": "password",
+			"value": ""
+		},
+		{
+			"key": "new_password",
+			"value": ""
+		},
+		{
+			"key": "addressId",
+			"value": ""
+		},
+		{
+			"key": "email",
+			"value": ""
+		},
+		{
+			"key": "userId",
+			"value": ""
+		},
+		{
+			"key": "token",
+			"value": ""
+		}
+	]
+}
